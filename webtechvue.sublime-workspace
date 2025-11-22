@@ -1,0 +1,648 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"co",
+				"console"
+			],
+			[
+				"con",
+				"console"
+			],
+			[
+				"v",
+				"v-for"
+			],
+			[
+				"lightgre",
+				"lightgrey"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"b",
+				"buttonClicked"
+			],
+			[
+				"fa",
+				"facts"
+			],
+			[
+				"no",
+				"not-allowed"
+			],
+			[
+				"d",
+				"disabled"
+			],
+			[
+				"di",
+				"disabled"
+			],
+			[
+				"a",
+				"a"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/App.vue",
+			"settings":
+			{
+				"buffer_size": 127,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					30,
+					1,
+					"hungry_backspace",
+					null,
+					"AQAAAAAAAAAAAAAAAAAAAAAAAADeAAAAPHNjcmlwdCBzZXR1cD48L3NjcmlwdD4KCjx0ZW1wbGF0ZT4KICA8aDE+WW91IGRpZCBpdCE8L2gxPgogIDxwPgogICAgVmlzaXQgPGEgaHJlZj0iaHR0cHM6Ly92dWVqcy5vcmcvIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+dnVlanMub3JnPC9hPiB0byByZWFkIHRoZQogICAgZG9jdW1lbnRhdGlvbgogIDwvcD4KPC90ZW1wbGF0ZT4KCjxzdHlsZSBzY29wZWQ+PC9zdHlsZT4K",
+					"AQAAAAAAAAABAAAAAAAAAAAAAADeAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					31,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAAfwAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"contents": "<script setup>\n    import {ref, reactive} from \"vue\"\n    let width = 4;\n    let height = 5;\n    const showGame = ref(false);\n    const selected = reactive([]);\n\n    for (let h=0;h<height;h++){\n        for (let w=0;w<width;w++){\n            selected.push(false)\n            console.log(\"a\")\n        }\n    }\n    console.log(selected)\n\n    function buttonClicked(){\n        showGame.value = true;\n    }\n\n    function rectClicked(event){\n        console.log(event.target)\n        event.target.fill = \"#000000\"\n        let id = event.target.id.substring(8)\n        for(let i=0; i<selected.length;i++){\n            selected[i] = false\n        }\n        console.log(id)\n        selected[id] = true\n    }\n</script>\n\n<template>\n    <h1>Crossword Demo</h1>\n    <button @click=\"buttonClicked\">Build Crossword</button>\n    <svg v-if=\"showGame\" width=\"2000\" height=\"1000\" xmlns=\"http://www.w3.org/2000/svg\">\n        <g v-for=\"n in height\">\n            <rect @click=\"rectClicked($event)\" v-for=\"m in width\" :id=\"'cell-id-'+((n-1)*width+m-1)\" :class=\"{'cell--selected':selected[((n-1)*width+m-1)]}\" width=\"100\" height=\"100\" :x=\"m*100\" :y=\"n*100\" rx=\"10\" ry=\"10\" fill=\"white\" />\n        </g>\n    </svg>\n</template>\n\n<style scoped>\n    .cell--selected {\n        fill: blue;\n    }\n</style>\n",
+			"file": "src/components/Main.vue",
+			"file_size": 1160,
+			"file_write_time": 134083190143006304,
+			"settings":
+			{
+				"buffer_size": 1272,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					3,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAAfwAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					10,
+					2,
+					"hungry_backspace",
+					null,
+					"AgAAAA8AAAAAAAAADwAAAAAAAAAqAAAAICBpbXBvcnQgTWFpbiBmcm9tICJAL2NvbXBvbmVudHMvTWFpbi52dWUiDwAAAAAAAAAPAAAAAAAAAAEAAAAK",
+					"AQAAAAAAAAABAAAAOQAAAAAAAAAPAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					15,
+					1,
+					"hungry_backspace",
+					null,
+					"AQAAACQAAAAAAAAAJAAAAAAAAAAKAAAACiAgPE1haW4vPg",
+					"AQAAAAAAAAABAAAALgAAAAAAAAAkAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					29,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAAiAQAAAAAAABKAAAAPHNjcmlwdCBzZXR1cD4KPC9zY3JpcHQ+Cgo8dGVtcGxhdGU+CjwvdGVtcGxhdGU+Cgo8c3R5bGUgc2NvcGVkPgo8L3N0eWxlPgo",
+					"AQAAAAAAAAABAAAASgAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					99,
+					1,
+					"right_delete",
+					null,
+					"AQAAAAAAAAAAAAAAAAAAAAAAAACIBAAAPHNjcmlwdCBzZXR1cD4KICBpbXBvcnQge3JlZiwgcmVhY3RpdmV9IGZyb20gInZ1ZSIKICBsZXQgd2lkdGggPSA0OwogIGxldCBoZWlnaHQgPSA1OwogIGNvbnN0IHNob3dHYW1lID0gcmVmKGZhbHNlKTsKICBjb25zdCBzZWxlY3RlZCA9IHJlYWN0aXZlKFtdKTsKCiAgZm9yIChsZXQgaD0wO2g8aGVpZ2h0O2grKyl7CiAgICBmb3IgKGxldCB3PTA7dzx3aWR0aDt3KyspewogICAgICBzZWxlY3RlZC5wdXNoKGZhbHNlKQogICAgICBjb25zb2xlLmxvZygiYSIpCiAgICB9CiAgfQogIGNvbnNvbGUubG9nKHNlbGVjdGVkKQoKICBmdW5jdGlvbiBidXR0b25DbGlja2VkKCl7CiAgICBzaG93R2FtZS52YWx1ZSA9IHRydWU7CiAgfQoKICBmdW5jdGlvbiByZWN0Q2xpY2tlZChldmVudCl7CiAgICBjb25zb2xlLmxvZyhldmVudC50YXJnZXQpCiAgICBldmVudC50YXJnZXQuZmlsbCA9ICIjMDAwMDAwIgogICAgbGV0IGlkID0gZXZlbnQudGFyZ2V0LmlkLnN1YnN0cmluZyg4KQogICAgZm9yKGxldCBpPTA7IGk8c2VsZWN0ZWQubGVuZ3RoO2krKyl7CiAgICAgIHNlbGVjdGVkW2ldID0gZmFsc2UKICAgIH0KICAgIGNvbnNvbGUubG9nKGlkKQogICAgc2VsZWN0ZWRbaWRdID0gdHJ1ZQogIH0KPC9zY3JpcHQ+Cgo8dGVtcGxhdGU+CiAgPGgxPkNyb3Nzd29yZCBEZW1vPC9oMT4KICA8YnV0dG9uIEBjbGljaz0iYnV0dG9uQ2xpY2tlZCI+QnVpbGQgQ3Jvc3N3b3JkPC9idXR0b24+CiAgPHN2ZyB2LWlmPSJzaG93R2FtZSIgd2lkdGg9IjIwMDAiIGhlaWdodD0iMTAwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxnIHYtZm9yPSJuIGluIGhlaWdodCI+CiAgICAgIDxyZWN0IEBjbGljaz0icmVjdENsaWNrZWQoJGV2ZW50KSIgdi1mb3I9Im0gaW4gd2lkdGgiIDppZD0iJ2NlbGwtaWQtJysoKG4tMSkqd2lkdGgrbS0xKSIgOmNsYXNzPSJ7J2NlbGwtLXNlbGVjdGVkJzpzZWxlY3RlZFsoKG4tMSkqd2lkdGgrbS0xKV19IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgOng9Im0qMTAwIiA6eT0ibioxMDAiIHJ4PSIxMCIgcnk9IjEwIiBmaWxsPSJ3aGl0ZSIgLz4KICAgIDwvZz4KICA8L3N2Zz4KPC90ZW1wbGF0ZT4KCjxzdHlsZSBzY29wZWQ+CiAgLmNlbGwtLXNlbGVjdGVkIHsKICAgIGZpbGw6IGJsdWU7CiAgfQo8L3N0eWxlPgo",
+					"AQAAAAAAAAABAAAAAAAAAAAAAACIBAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					105,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAA+AQAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"vue",
+				"Set Syntax: Vue Component"
+			],
+			[
+				"css",
+				"Set Syntax: CSS3"
+			],
+			[
+				"pce",
+				"Package Control: Enable Package"
+			],
+			[
+				"pcd",
+				"Package Control: Disable Package"
+			],
+			[
+				"tag",
+				"BracketHighlighter: Tag Settings"
+			],
+			[
+				"pack",
+				"Package Control: Enable Package"
+			],
+			[
+				"prett",
+				"HTMLPrettify"
+			],
+			[
+				"color",
+				"UI: Customize Color Scheme"
+			],
+			[
+				"pci ",
+				"Package Control: Install Package"
+			],
+			[
+				"pc",
+				"Package Control: Remove Package"
+			],
+			[
+				"pci",
+				"Package Control: Install Package"
+			],
+			[
+				"ter",
+				"Preferences: Terminal Settings"
+			],
+			[
+				"sett",
+				"Preferences: Settings"
+			],
+			[
+				"them",
+				"UI: Select Theme"
+			],
+			[
+				"settin",
+				"Preferences: Settings"
+			],
+			[
+				"schem",
+				"Schemr: List all schemes"
+			],
+			[
+				"syntax vu",
+				"Set Syntax: Vue Component"
+			],
+			[
+				"new ",
+				"ANF: New File"
+			],
+			[
+				"tern",
+				"tern_for_sublime: Describe"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 134.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/src",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/src/assets",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/src/components"
+	],
+	"file_history":
+	[
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/webtechvue.sublime-project",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/README.md",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/src/assets/main.css",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/src/components/webtechvue.sublime-project",
+		"/home/arjen/Documents/UNI/WebTech/WebTechProjektVue/index.html",
+		"/home/arjen/Documents/webdev/test/src/assets/main.css",
+		"/home/arjen/Documents/webdev/test/src/components/Main.vue",
+		"/home/arjen/Documents/webdev/test/src/App.vue",
+		"/home/arjen/Documents/webdev/test/.vscode/settings.json",
+		"/home/arjen/Documents/webdev/test/src/components/WelcomeItem.vue",
+		"/home/arjen/Documents/webdev/test/src/assets/logo.svg",
+		"/home/arjen/Documents/webdev/vue-challenge/src/App.vue",
+		"/home/arjen/Documents/webdev/vue-challenge/OG_MOCKUP/index.html",
+		"/home/arjen/Documents/webdev/vue-challenge/src/assets/main.css",
+		"/home/arjen/Documents/webdev/vue-challenge/src/components/Header.vue",
+		"/home/arjen/Documents/webdev/vue-challenge/src/components/Main.vue",
+		"/home/arjen/Documents/webdev/vue-challenge/src/components/Footer.vue",
+		"/home/arjen/Documents/webdev/vue-challenge/OG_MOCKUP/styles.css",
+		"/home/arjen/Documents/webdev/vue-challenge/index.html",
+		"/home/arjen/.config/sublime-text/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
+		"/home/arjen/Documents/webdev/vue-challenge/src/assets/logo.svg",
+		"/home/arjen/Documents/webdev/vue-challenge/src/main.css",
+		"/home/arjen/.config/sublime-text/Packages/User/Terminal.sublime-settings",
+		"/home/arjen/.config/sublime-text/Packages/Terminal/Terminal.sublime-settings",
+		"/home/arjen/Documents/webdev/vue-challenge/src/components/WelcomeItem.vue",
+		"/home/arjen/.config/sublime-text/Packages/User/Default.sublime-mousemap",
+		"/home/arjen/Documents/webdev/vue-challenge/vite.config.js",
+		"/home/arjen/.config/sublime-text/Packages/Clickable URLs/Default (Linux).sublime-keymap",
+		"/home/arjen/.config/sublime-text/Packages/User/Default (Linux).sublime-keymap",
+		"/home/arjen/.config/sublime-text/Packages/User/ClickableUrls.sublime-settings",
+		"/home/arjen/Downloads/reveal.js-master/test/simple.md",
+		"/run/media/arjen/PHILIPSUSB/config.yaml",
+		"/home/arjen/Downloads/diinki-retrofuture/gtk_theme/README.md",
+		"/home/arjen/Downloads/diinki-retrofuture/gtk_theme/diinki-retro-dark/README.md"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/App.vue",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 127,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								127,
+								127
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"git_gutter_is_enabled": false,
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Vue/Vue Component.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/components/Main.vue",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1272,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1272,
+								1272
+							]
+						],
+						"settings":
+						{
+							"_anf_new": "",
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"git_gutter_is_enabled": true,
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Vue/Vue Component.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 39.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SFTP":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "webtechvue.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 215.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
