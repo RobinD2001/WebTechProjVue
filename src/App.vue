@@ -1,9 +1,12 @@
 <script setup>
-  import Main from "@/components/Main.vue"
+    import Auth from "@/components/auth/Auth.vue";
+    import { RouterView, RouterLink } from "vue-router";
 </script>
 
 <template>
-  <Main/>
+    <Auth />
+    <router-view></router-view>
+    <router-link :to="{name:'admin'}"><button>Admin-Page</button></router-link> 
 </template>
 
 <style scoped>

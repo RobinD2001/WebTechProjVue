@@ -30,6 +30,7 @@
 
 <template>
     <h1>Crossword Demo</h1>
+    <br/>
     <button @click="buttonClicked">Build Crossword</button>
     <svg v-if="showGame" width="2000" height="1000" xmlns="http://www.w3.org/2000/svg">
         <g v-for="n in height">
