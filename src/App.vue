@@ -1,13 +1,16 @@
 <script setup>
-    import Auth from "@/components/auth/Auth.vue";
-    import { RouterView, RouterLink } from "vue-router";
+import Header from "@/components/layout/Header.vue";
+import Footer from "@/components/layout/Footer.vue";
+import { RouterView, RouterLink } from "vue-router";
 </script>
 
 <template>
-    <Auth />
-    <router-view></router-view>
-    <router-link :to="{name:'admin'}"><button>Admin-Page</button></router-link> 
+  <Header />
+  <!-- <router-link :to="{ name: 'admin' }"
+    ><button class="btn btn-warning">Admin-Page</button></router-link
+  > -->
+  <router-view></router-view>
+  <Footer />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

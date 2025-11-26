@@ -1,150 +1,81 @@
 <script setup>
-    import { computed, ref, reactive } from "vue";
-    import { useRouter } from "vue-router";
-    import { useAuth } from "@/composables/useAuth.js"
+import { ref, computed } from "vue";
+import { BModal, BAlert } from "bootstrap-vue-3";
+import AuthForm from "./AuthForm.vue";
 
-    const router = useRouter();
-    const { login, register, logout } = useAuth();
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-    const authType = ref("login");
+const emit = defineEmits(["update:modelValue"]);
 
-    const errorMessage = ref("");
-    const successMessage = ref("");
+const isLogin = ref(true);
+const showAlert = ref(false);
+const wasSuccessful = ref(false);
+const alertMsg = ref("");
 
-    const user = reactive({
-        name: "",
-        password: "",
-    });
+const isVisible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
 
-    function switchType(view) {
-        authType.value = view;
-        errorMessage.value = "";
-        successMessage.value = "";
-    }
+const modalTitle = computed(() => {
+  return isLogin.value ? "Login" : "Register";
+});
 
-    const submitLabel = computed(() =>
-        authType.value.charAt(0).toUpperCase() + authType.value.slice(1)
-    );
+function onFormSubmitted(result) {
+  const [success, message] = result;
 
-	async function submitForm(){
-		errorMessage.value = "";
-		successMessage.value = "";
+  showAlert.value = true;
+  wasSuccessful.value = success;
+  alertMsg.value = message;
 
-		try {
-			let data;
+  if (success) {
+    setTimeout(() => {
+      isVisible.value = false;
+    }, 500);
+  }
 
-            if (authType.value === "login") {
-                data = await login({
-                    name: user.name,
-                    password: user.password
-                });
-            } else {
-                data = await register({
-                    name: user.name,
-                    password: user.password
-                });
-            }
+  setTimeout(() => {
+    dismissAlert();
+  }, 5000);
+}
 
-			successMessage.value = data.message || submitLabel.value+" successful";
-
-			console.log("Auth success:", data.user);
-            router.push({ name: "home"});
-		} catch(e) {
-			console.error(e);
-            errorMessage.value = e.message || submitLabel.value + " failed";
-		}
-
-		user.name = "";
-		user.password = "";
-	}
+function dismissAlert() {
+  showAlert.value = false;
+}
 </script>
 
 <template>
-  <div class="auth">
-    <div class="auth_toggle">
-      <button
-        type="button"
-        :class="{ 'auth_toggle-button--active': authType === 'login' }"
-        class="auth_toggle-button"
-        @click="switchType('login')"
-      >
-        Login
-      </button>
-      <button
-        type="button"
-        :class="{ 'auth_toggle-button--active': authType === 'register' }"
-        class="auth_toggle-button"
-        @click="switchType('register')"
-      >
-        Register
-      </button>
-    </div>
-    <div>
-		<form @submit.prevent="submitForm">
-			<table>
-				<tbody>
-					<tr>
-						<td>
-							<span>Username:</span>
-						</td>
-						<td>
-							<input type="text" v-model="user.name" required>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<span>Password:</span>
-						</td>
-						<td>
-							<input type="password" v-model="user.password" required>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p v-if="errorMessage" style="color: red">
-				{{ errorMessage }}
-			</p>
-			<p v-if="successMessage" style="color: green">
-				{{ successMessage }}
-			</p>
-			<button type="submit">{{ submitLabel }}</button>
-		</form>
-        <button @click="logout()">Logout</button>
-	</div>
-</div>
+  <BModal
+    v-model="isVisible"
+    id="authModal"
+    :title="modalTitle"
+    hide-footer="true"
+    centered
+  >
+    <AuthForm
+      :isLogin="isLogin"
+      @success="onFormSubmitted($event)"
+      @modeChange="isLogin = $event"
+    />
+    <BAlert
+      :model-value="showAlert"
+      :variant="wasSuccessful ? 'success' : 'danger'"
+      dismissible
+      class="mb-3"
+      @dismissed="dismissAlert"
+    >
+      {{ alertMsg }}
+    </BAlert>
+  </BModal>
 </template>
 
-<style scoped>
-    .auth {
-    display: inline-block;
-    padding: 16px;
-    border: 1px solid #d0d7de;
-    border-radius: 4px;
-    background: #6e6565;
-    }
-
-    .auth_toggle {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    }
-
-    .auth_toggle-button {
-    padding: 8px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 3px;
-    background: white;
-    cursor: pointer;
-    }
-
-    .auth_toggle-button--active {
-    background: #0ea5e9;
-    color: white;
-    border-color: #0284c7;
-    }
-
-	form {
-		border: 1px solid #cccccc;
-		padding: 0.5em;
-	}
-</style>
+<style scoped></style>
