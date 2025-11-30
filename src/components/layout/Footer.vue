@@ -1,9 +1,9 @@
 <script setup>
-import {
-  faFacebook,
-  faInstagram,
-  faXTwitter,
-} from "@fortawesome/free-brands-svg-icons";
+  import {  
+    faGithub,
+    faXTwitter,
+  } from "@fortawesome/free-brands-svg-icons";
+  import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 </script>
 
 <template>
@@ -13,10 +13,9 @@ import {
         <div class="col-md-4 mb-3">
           <h5>About Us</h5>
           <p>
-            A crossword a day keeps the doctor away. From monday to sunday you
-            will get a new mini crossword handpicked by our editing staff.
-            Please enjoy your time here and join the community of puzzle
-            enthusiasts.
+            A crossword a day keeps the doctor away.<br/>
+            I post a new mini every morning — quick, fun, and hopefully a little clever.
+            Appreciate you stopping by this little puzzle corner of mine.
           </p>
         </div>
         <div class="col-md-4 mb-3">
@@ -41,18 +40,13 @@ import {
           <h5>Follow Us</h5>
           <ul class="list-inline social-icons">
             <li class="list-inline-item">
-              <a href="https://www.facebook.com" class="text-dark">
-                <font-awesome-icon :icon="faFacebook" />
-              </a>
-            </li>
-            <li class="list-inline-item">
               <a href="https://www.x.com" class="text-dark">
-                <font-awesome-icon :icon="faXTwitter"
+                <FontAwesomeIcon :icon="faXTwitter"
               /></a>
             </li>
             <li class="list-inline-item">
-              <a href="https://www.instagram.com" class="text-dark">
-                <font-awesome-icon :icon="faInstagram" />
+              <a href="https://www.github.com" class="text-dark">
+                <FontAwesomeIcon :icon="faGithub" />
               </a>
             </li>
           </ul>

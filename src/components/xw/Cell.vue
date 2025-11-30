@@ -53,6 +53,11 @@
 		}
 	}
 
+	function onTab(){
+		console.log("Tab pressed");
+		interacted();
+	}
+
 	watch(
 		() => props.isActive,
 		(active) => {
@@ -74,16 +79,30 @@
 			"xw-cell-input": true,
 			"xw-cell-highlighted": props.cell.isHighlighted,
 			"xw-cell-selected": isSelected.value,
+			"xw-cell-block": props.cell.isBlock,
 		};
 	});
 
 	function interacted() {
-		isSelected.value = !isSelected.value;
+		isSelected.value = !isSelected.value;		
 	}
+
+	const cellAriaLabel = computed(() => {
+		const rowNumber = props.cell.row + 1;
+		const colNumber = props.cell.col + 1;
+		const clueInfo = props.cell.clueNumber ? `, clue ${props.cell.clueNumber}` : "";
+		const contentState = props.cell.value ? `, contains '${props.cell.value}'` : ", empty";
+		return `Crossword cell row ${rowNumber}, column ${colNumber}${clueInfo}${contentState}`;
+	});
 </script>
 <template>
-	<div class="xw-cell-wrapper">
-		<div v-if="!cell.isBlock" @click="interacted">
+	<div class="xw-cell-wrapper" :aria-hidden="cell.isBlock" role="presentation">
+		<div
+			v-if="!cell.isBlock"
+			@click="interacted"
+			role="gridcell"
+			:aria-selected="isSelected"
+			:aria-label="`Grid cell ${cell.row + 1}-${cell.col + 1}`">
 			<div v-if="props.cell.clueNumber != 0" class="xw-cell-clue">
 				{{ props.cell.clueNumber }}
 			</div>
@@ -92,8 +111,9 @@
 				v-model="displayValue"
 				maxlength="1"
 				:class="cellClasses"
+				:aria-label="cellAriaLabel"
 				@keydown="onKeydown"
-				@keydown.tab.prevent />
+				@keydown.tab.prevent="onTab" />
 		</div>
 	</div>
 </template>
@@ -140,6 +160,10 @@
 		border-color: var(--accent-strong);
 		box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.75);
 		color: #0a2016;
+	}
+
+	.xw-cell-block {
+		background-color: #2D4F39;
 	}
 
 	.xw-cell-clue {

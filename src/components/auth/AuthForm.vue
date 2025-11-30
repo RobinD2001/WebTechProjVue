@@ -66,11 +66,11 @@
 
 <template>
 	<!-- BootstrapVue form instead of raw <form> -->
-	<BForm @submit.prevent="submitForm" novalidate>
+	<BForm @submit.prevent="submitForm" novalidate :aria-busy="submitting">
 		<div class="mb-3 text-center">
-			<h1 class="h4 mb-1">
+			<!-- <h1 class="h4 mb-1 text-decoration">
 				{{ isLogin ? "Welcome back" : "Join us" }}
-			</h1>
+			</h1> -->
 			<p class="text-muted mb-0">
 				{{
 					isLogin
@@ -82,26 +82,33 @@
 
 		<BFormGroup label="Name" label-for="auth-name" class="mb-3">
 			<BFormInput
-				id="auth-name"
+				class="auth-name"
 				v-model="user.name"
 				type="text"
 				required
 				autocomplete="username"
+				aria-required="true"
 				placeholder="Enter your name" />
 		</BFormGroup>
 
 		<BFormGroup label="Password" label-for="auth-password" class="mb-3">
 			<BFormInput
-				id="auth-password"
+				class="auth-password"
 				v-model="user.password"
 				type="password"
 				required
 				autocomplete="current-password"
+				aria-required="true"
 				placeholder="Enter your password" />
 		</BFormGroup>
 
 		<div class="d-grid mb-3">
-			<BButton type="submit" variant="primary" :disabled="submitting">
+			<BButton
+				type="submit"
+				variant="primary"
+				:disabled="submitting"
+				:aria-disabled="submitting"
+				:aria-busy="submitting">
 				{{ submitting ? "Please wait..." : authTypeLabel }}
 			</BButton>
 		</div>
@@ -109,24 +116,37 @@
 		<div class="text-center small">
 			<span v-if="isLogin">
 				Not a member yet?
-				<BButton
-					variant="link"
-					size="sm"
-					class="p-0 align-baseline text-decoration-underline"
-					@click="toggleAuth">
+				<button type="button" class="toggle-btn" @click="toggleAuth">
 					Register
-				</BButton>
+				</button>
 			</span>
 			<span v-else>
 				Already a member?
-				<BButton
-					variant="link"
-					size="sm"
-					class="p-0 align-baseline text-decoration-underline"
-					@click="toggleAuth">
+				<button type="button" class="toggle-btn" @click="toggleAuth">
 					Login
-				</BButton>
+				</button>
 			</span>
 		</div>
 	</BForm>
 </template>
+
+<style scoped>
+.toggle-btn {
+	background: transparent;
+	border: none;
+	color: var(--bs-primary);
+	padding: 0;
+	font-size: 0.875rem;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.toggle-btn:focus,
+.toggle-btn:active,
+.toggle-btn:hover {
+	color: var(--bs-primary);
+	outline: none;
+	box-shadow: none;
+	text-decoration: underline;
+}
+</style>

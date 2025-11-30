@@ -129,35 +129,49 @@
 </script>
 
 <template>
-	<BCol id="xw_clues">
+	<BCol id="xw_clues" aria-label="Crossword clues">
 		<BRow class="mb-5">
-			<BListGroup>
+			<BListGroup tag="ul" aria-label="Across clues">
 				<BListGroupItem>
 					<h3>Across</h3>
 				</BListGroupItem>
 				<BListGroupItem
 					@click="setClue(clue, false)"
 					v-for="clue in acrossClues"
+					:key="`across-${clue.start_number}`"
 					:class="{
 						highlighted: props.selectedAcrossId == clue.start_number,
 						'cursor-pointer': true,
-					}">
+					}"
+					tag="li"
+					role="button"
+					tabindex="0"
+					:aria-current="props.selectedAcrossId == clue.start_number ? 'true' : undefined"
+					@keydown.enter.prevent="setClue(clue, false)"
+					@keydown.space.prevent="setClue(clue, false)">
 					<strong>{{ clue.start_number }}.</strong> {{ clue.question }}
 				</BListGroupItem>
 			</BListGroup>
 		</BRow>
 		<BRow>
-			<BListGroup>
+			<BListGroup tag="ul" aria-label="Down clues">
 				<BListGroupItem>
 					<h3>Down</h3>
 				</BListGroupItem>
 				<BListGroupItem
 					@click="setClue(clue, true)"
 					v-for="clue in downClues"
+					:key="`down-${clue.start_number}`"
 					:class="{
 						highlighted: props.selectedDownId == clue.start_number,
 						'cursor-pointer': true,
-					}">
+					}"
+					tag="li"
+					role="button"
+					tabindex="0"
+					:aria-current="props.selectedDownId == clue.start_number ? 'true' : undefined"
+					@keydown.enter.prevent="setClue(clue, true)"
+					@keydown.space.prevent="setClue(clue, true)">
 					<strong>{{ clue.start_number }}.</strong> {{ clue.question }}
 				</BListGroupItem>
 			</BListGroup>

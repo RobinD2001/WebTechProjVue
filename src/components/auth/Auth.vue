@@ -30,6 +30,23 @@ const modalTitle = computed(() => {
   return isLogin.value ? "Login" : "Register";
 });
 
+function blurActiveElement() {
+  if (typeof document === "undefined") return;
+  const activeElement = document.activeElement;
+  if (activeElement && activeElement instanceof HTMLElement) {
+    activeElement.blur();
+  }
+}
+
+function closeModal() {
+  blurActiveElement();
+  isVisible.value = false;
+}
+
+function onHide() {
+  blurActiveElement();
+}
+
 function onFormSubmitted(result) {
   const [success, message] = result;
 
@@ -39,7 +56,7 @@ function onFormSubmitted(result) {
 
   if (success) {
     setTimeout(() => {
-      isVisible.value = false;
+      closeModal();
     }, 500);
   }
 
@@ -56,10 +73,13 @@ function dismissAlert() {
 <template>
   <BModal
     v-model="isVisible"
-    id="authModal"
-    :title="modalTitle"
+    class="authModal"
+    :title='isLogin ? "Welcome back" : "Join us"'
     hide-footer="true"
     centered
+    :aria-label="modalTitle + ' dialog'"
+    header-close-label="Close authentication dialog"
+    @hide="onHide"
   >
     <AuthForm
       :isLogin="isLogin"
@@ -72,6 +92,8 @@ function dismissAlert() {
       dismissible
       class="mb-3"
       @dismissed="dismissAlert"
+      aria-live="polite"
+      aria-atomic="true"
     >
       {{ alertMsg }}
     </BAlert>

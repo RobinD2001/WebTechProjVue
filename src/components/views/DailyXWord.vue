@@ -1,30 +1,19 @@
 <script setup>
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
-	import { computed } from "vue";
-	const today = computed(() => {
-		return new Date().toLocaleString("en-US").substring(0, 10);
-	});
+	import { computed } from "vue"
+	const todayDate = computed(() => new Date());
+	const todayIso = computed(() => todayDate.value.toISOString().split("T")[0]);
+	const todayLabel = computed(() => todayDate.value.toLocaleDateString());
 </script>
 
 <template>
 	<h1>
-		Crossword of the day: {{ new Date(today).getDate() }}.{{ new Date(today).getMonth() }}.{{
-			new Date(today).getFullYear()
-		}}
+		Crossword of the day:
+		<time :datetime="todayDate" aria-label="Today's crossword date">{{ todayLabel }}</time>
 	</h1>
 	<br />
 
-	<CrosswordApp :date="today" />
+	<CrosswordApp :date="todayIso" />
 </template>
 
-<style scoped>
-	.cell--selected {
-		fill: blue;
-		border: 5px solid black;
-	}
 
-	.cell {
-		stroke-width: 3;
-		stroke: black;
-	}
-</style>
