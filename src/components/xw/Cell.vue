@@ -73,7 +73,7 @@
 			"text-center": true,
 			"xw-cell-input": true,
 			"xw-cell-highlighted": props.cell.isHighlighted,
-			"bg-warning": isSelected.value,
+			"xw-cell-selected": isSelected.value,
 		};
 	});
 
@@ -82,7 +82,7 @@
 	}
 </script>
 <template>
-	<div class="xw_cell_wrapper">
+	<div class="xw-cell-wrapper">
 		<div v-if="!cell.isBlock" @click="interacted">
 			<div v-if="props.cell.clueNumber != 0" class="xw-cell-clue">
 				{{ props.cell.clueNumber }}
@@ -99,31 +99,56 @@
 </template>
 
 <style scoped>
-	.xw-cell_wrapper {
+	.xw-cell-wrapper {
+		position: relative;
 		width: 100%;
-		height: 100%;
 		aspect-ratio: 1 / 1;
 		cursor: pointer;
 	}
 
+	.xw-cell-wrapper > div {
+		position: absolute;
+		inset: 0;
+	}
+
 	.xw-cell-input {
 		height: 100%;
-		font-weight: bold;
+		width: 100%;
+		font-weight: 800;
 		text-transform: uppercase;
 		padding: 0;
-		padding-top: 0.3em;
 		text-align: center;
-		font-size: 5.25rem;
+		font-size: 2.5rem;
 		caret-color: transparent;
 		cursor: pointer;
+		border: 3px solid var(--accent);
+		border-radius: 10px;
+		background-color: var(--card);
+		color: var(--accent-strong);
+		box-shadow: inset 0 0 0 2px rgba(47, 107, 79, 0.08);
 	}
+
 	.xw-cell-highlighted {
-		background-color: lightblue;
+		background-color: #8bb59f;
+		border-color: var(--accent-strong);
+		box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.6);
+		color: #113023;
+	}
+
+	.xw-cell-selected {
+		background-color: #5f8f77;
+		border-color: var(--accent-strong);
+		box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.75);
+		color: #0a2016;
 	}
 
 	.xw-cell-clue {
 		position: absolute;
-		margin: 0.5em;
-		font-size: 2.3em;
+		top: 0.4rem;
+		left: 0.45rem;
+		font-size: 0.85rem;
+		color: var(--accent-strong);
+		font-weight: 700;
+		pointer-events: none;
 	}
 </style>

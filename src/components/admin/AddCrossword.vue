@@ -7,6 +7,9 @@
 	const today = new Date().toISOString().split("T")[0];
 	const releaseDate = ref(today);
 	const isPublic = ref(false);
+	const showAlert = ref(false);
+	const alertVariant = ref("success");
+	const alertMessage = ref("");
 	const newClue = reactive({
 		clue: "",
 		answer: "",
@@ -119,19 +122,34 @@
 		updateStartNumbers();
 	}
 
+	function openAlert(variant, message) {
+		alertVariant.value = variant;
+		alertMessage.value = message;
+		showAlert.value = true;
+	}
+
 	async function submitCrossword() {
 		if (!clues.value.length) return;
 		updateStartNumbers();
-		await addCrosswordToDB({
-			clues: clues.value,
-			releaseDate: releaseDate.value,
-			isPublic: isPublic.value,
-		});
+		try {
+			const res = await addCrosswordToDB({
+				clues: clues.value,
+				releaseDate: releaseDate.value,
+				isPublic: isPublic.value,
+			});
+			openAlert("success", res?.message || "Crossword uploaded successfully.");
+			clues.value = [];
+		} catch (err) {
+			openAlert("danger", err?.message || "Upload failed. Please try again.");
+		}
 	}
 </script>
 
 <template>
 	<section class="p-4">
+		<BAlert :model-value="showAlert" :variant="alertVariant" dismissible @dismissed="showAlert = false">
+			{{ alertMessage }}
+		</BAlert>
 		<BListGroup class="mb-4">
 			<BListGroupItem
 				v-for="(clue, index) in clues"

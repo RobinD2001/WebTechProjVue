@@ -293,10 +293,10 @@
 </script>
 
 <template>
-	<BContainer class="mb-5">
-		<BRow>
+	<BContainer class="mb-5 crossword-shell">
+		<BRow class="g-4">
 			<BCol id="xw_grid">
-				<BContainer class="bg-dark pb-2 rounded-4">
+				<BContainer class="xw-board p-3 rounded-4">
 					<BRow v-for="(row, rId) in grid" :key="rId" class="g-1">
 						<BCol v-for="cell in row" :key="cell.col" class="p-0">
 							<Cell
@@ -324,3 +324,19 @@
 	</BContainer>
 	<WinnerModal v-model="showWinner" />
 </template>
+
+<style scoped>
+	.crossword-shell {
+		background: transparent;
+	}
+
+	.xw-board {
+		background: var(--card);
+		border: 2px solid var(--border);
+		box-shadow: var(--shadow);
+	}
+
+	#xw_grid {
+		min-width: 360px;
+	}
+</style>

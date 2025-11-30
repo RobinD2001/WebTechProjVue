@@ -171,6 +171,9 @@
 	}
 
 	.highlighted {
-		background-color: lightblue;
+		background-color: #8bb59f;
+		border-color: var(--accent-strong);
+		color: #0a2016;
+		box-shadow: 0 0 0 2px rgba(47, 107, 79, 0.6) inset;
 	}
 </style>
