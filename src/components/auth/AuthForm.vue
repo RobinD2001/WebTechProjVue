@@ -65,12 +65,8 @@
 </script>
 
 <template>
-	<!-- BootstrapVue form instead of raw <form> -->
 	<BForm @submit.prevent="submitForm" novalidate :aria-busy="submitting">
 		<div class="mb-3 text-center">
-			<!-- <h1 class="h4 mb-1 text-decoration">
-				{{ isLogin ? "Welcome back" : "Join us" }}
-			</h1> -->
 			<p class="text-muted mb-0">
 				{{
 					isLogin
@@ -80,7 +76,7 @@
 			</p>
 		</div>
 
-		<BFormGroup label="Name" label-for="auth-name" class="mb-3">
+		<BFormGroup label="Name" class="mb-3">
 			<BFormInput
 				class="auth-name"
 				v-model="user.name"
@@ -88,10 +84,11 @@
 				required
 				autocomplete="username"
 				aria-required="true"
+				aria-label="Name"
 				placeholder="Enter your name" />
 		</BFormGroup>
 
-		<BFormGroup label="Password" label-for="auth-password" class="mb-3">
+		<BFormGroup label="Password" class="mb-3">
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
@@ -99,6 +96,7 @@
 				required
 				autocomplete="current-password"
 				aria-required="true"
+				aria-label="Password"
 				placeholder="Enter your password" />
 		</BFormGroup>
 

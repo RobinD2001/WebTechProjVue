@@ -13,39 +13,39 @@
 </script>
 
 <template>
-	<BNavbar toggleable="lg" class="bg-body-tertiary mb" aria-label="Main navigation">
+	<BNavbar toggleable="sm" class="bg-body-tertiary mb" aria-label="Main navigation">
 		<BContainer fluid class="d-flex align-items-center">
 			<BNavbarBrand to="/" tag="router-link" aria-label="Go to homepage">
 				<img src="/favicon-32x32.png" alt="Crossword app logo" />
 			</BNavbarBrand>
-			<BNavbarToggle target="header-nav" class="ms-auto d-lg-none"></BNavbarToggle>
+			<BNavbarToggle target="header-nav" class="ms-auto d-sm-none"></BNavbarToggle>
 			<BCollapse
 				id="header-nav"
 				is-nav
-				class="ms-lg-4 flex-grow-1 d-lg-flex align-items-center justify-content-between">
-				<BNavbarNav class="me-auto mb-2 mb-lg-0">
+				class="ms-sm-4 flex-grow-1 d-sm-flex align-items-center">
+				<BNavbarNav class="me-sm-auto mb-2 mb-sm-0">
 					<BNavItem :to="{ name: 'daily' }" tag="router-link">Daily Puzzle</BNavItem>
-					<BNavItem :to="{ name: 'daily' }" tag="router-link">Archive</BNavItem>
-					<BNavItem :to="{ name: 'daily' }" tag="router-link">Leaderboard</BNavItem>
-					<BNavItem :to="{ name: 'daily' }" tag="router-link">How to play</BNavItem>
+					<BNavItem :to="{ name: 'crossword' }" tag="router-link">Archive</BNavItem>
+					<BNavItem :to="{ name: 'leaderboard' }" tag="router-link">Leaderboard</BNavItem>
+					<BNavItem :to="{ name: 'howto' }" tag="router-link">How to play</BNavItem>
 				</BNavbarNav>
-				<div class="d-flex">
+				<BNavItem class="d-flex user ms-sm-3">
 					<router-link
 						v-if="isAuthenticated"
 						class="icon-btn"
 						:to="{ name: 'profile' }"
 						aria-label="Profile">
-						<font-awesome-icon icon="user" />
+						<font-awesome-icon :icon="faUser" />
 					</router-link>
 					<BButton
 						v-else
 						variant="outline-dark"
-						class="icon-btn"
+						class="btn"
 						aria-label="Login"
 						@click="openAuth">
-						<FontAwesomeIcon :icon="faUser" />
+            sign in
 					</BButton>
-				</div>
+				</BNavItem>
 			</BCollapse>
 		</BContainer>
 	</BNavbar>
@@ -70,5 +70,9 @@
 .icon-btn:focus {
 	color: #000;
 	border-color: #000;
+}
+
+.user {
+  margin-left: 2em;
 }
 </style>

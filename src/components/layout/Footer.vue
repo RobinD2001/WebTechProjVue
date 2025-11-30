@@ -10,15 +10,15 @@
   <footer class="mt-auto">
     <div class="container">
       <div class="row">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 mb-3">
           <h5>About Us</h5>
           <p>
             A crossword a day keeps the doctor away.<br/>
-            I post a new mini every morning — quick, fun, and hopefully a little clever.
-            Appreciate you stopping by this little puzzle corner of mine.
+            I post a new mini every morning - quick, fun, and hopefully a little clever. <br />
+            If you appreciate this little puzzle corner of mine, make sure to tell your friends.
           </p>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
           <h5>Quick Links</h5>
           <ul class="list-unstyled">
             <li>
@@ -36,7 +36,7 @@
             </li>
           </ul>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
           <h5>Follow Us</h5>
           <ul class="list-inline social-icons">
             <li class="list-inline-item">
