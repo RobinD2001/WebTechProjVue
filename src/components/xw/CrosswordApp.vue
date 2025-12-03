@@ -1,362 +1,48 @@
 <script setup>
-	import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
+	import { ref, watch } from "vue";
 	import Cell from "@/components/xw/Cell.vue";
 	import CluesWrapper from "@/components/xw/CluesWrapper.vue";
 	import WinnerModal from "./WinnerModal.vue";
-import { addSolve } from "@/composables/useXW";
-
-	const gridSize = reactive({ rows: 0, cols: 0 });
-	const grid = ref([]);
-	const showWinner = ref(false);
-	const countdownSeconds = ref(3);
-	const isCountingDown = ref(true);
-	const elapsedMs = ref(0);
-	let countdownInterval = null;
-	let elapsedInterval = null;
-
-	const curCell = reactive({ row: -1, col: -1 });
-	const nextCell = reactive({ row: -1, col: -1 });
-
-	const downSelected = ref(true);
-	const selectedAcrossId = ref(null);
-	const selectedDownId = ref(null);
+	import CrosswordTimer from "./CrosswordTimer.vue";
+	import { addSolve } from "@/composables/useXW";
+	import { useGridFactory } from "@/composables/xw/useGridFactory";
+	import { useSelection } from "@/composables/xw/useSelection";
+	import { useNavigation } from "@/composables/xw/useNavigation";
+	import { useCrosswordTimer } from "@/composables/xw/useCrosswordTimer";
 
 	const props = defineProps({
 		date: String,
 	});
 
-	const timerDisplay = computed(() => {
-		if (isCountingDown.value) {
-			return countdownSeconds.value.toString();
-		}
+	const showWinner = ref(false);
 
-		return new Date(elapsedMs.value).toISOString().substring(11, 19);
-	});
+	const { grid, gridSize, setGrid, checkValidation } = useGridFactory();
+	const selection = useSelection(grid, gridSize);
+	const navigation = useNavigation(grid, gridSize, selection);
+	const { timerDisplay, timerClass, startCountdown, stopTimer, elapsedMs } = useCrosswordTimer();
 
-	const timerClass = computed(() => (isCountingDown.value ? "countdown" : "running"));
+	const {
+		curCell,
+		nextCell,
+		downSelected,
+		selectedAcrossId,
+		selectedDownId,
+		updateCellSelection,
+		handleClueSelected,
+	} = selection;
 
-	function clearIntervals() {
-		if (countdownInterval) {
-			clearInterval(countdownInterval);
-			countdownInterval = null;
-		}
-		if (elapsedInterval) {
-			clearInterval(elapsedInterval);
-			elapsedInterval = null;
-		}
-	}
-
-	function startElapsed() {
-		const startedAt = Date.now();
-		elapsedMs.value = 0;
-		elapsedInterval = setInterval(() => {
-			elapsedMs.value = Date.now() - startedAt;
-		}, 1000);
-	}
-
-	function startCountdown() {
-		clearIntervals();
-		countdownSeconds.value = 3;
-		isCountingDown.value = true;
-
-		countdownInterval = setInterval(() => {
-			countdownSeconds.value -= 1;
-			if (countdownSeconds.value <= 0) {
-				countdownSeconds.value = 0;
-				clearInterval(countdownInterval);
-				countdownInterval = null;
-				isCountingDown.value = false;
-				startElapsed();
-			}
-		}, 1000);
-	}
-
-	function stopTimer() {
-		clearIntervals();
-	}
-
-	onMounted(() => {
-		startCountdown();
-	});
+	const { handleTyped, handleArrowKey, handleBackspace } = navigation;
 
 	watch(
 		() => props.date,
 		() => {
 			startCountdown();
-		},
-		{ immediate: false }
+		}
 	);
-
-	onBeforeUnmount(() => {
-		clearIntervals();
-	});
-
-	function setGrid(payload) {
-		gridSize.rows = payload.size.rows;
-		gridSize.cols = payload.size.cols;
-
-		const { clueNumbers, acrossIds, downIds } = payload;
-		//console.log(payload);
-
-		grid.value = Array.from({ length: gridSize.rows }, (_, r) =>
-			Array.from({ length: gridSize.cols }, (_, c) => {
-				const hasAcross = acrossIds[r][c] != null;
-				const hasDown = downIds[r][c] != null;
-
-				return {
-					id: `${r}-${c}`,
-					row: r,
-					col: c,
-					value: "",
-					acrossClueId: acrossIds[r][c],
-					downClueId: downIds[r][c],
-					clueNumber: clueNumbers[r][c],
-					isHighlighted: false,
-					isSelected: false,
-					isBlock: !hasAcross && !hasDown,
-				};
-			})
-		);
-	}
 
 	function updateCellValue(row, col, newValue) {
 		grid.value[row][col].value = newValue;
 		checkValidation();
-	}
-
-	function checkValidation() {
-		return grid.value;
-	}
-
-	function updateCellSelection(newRow, newCol) {
-		const cell = grid.value[newRow][newCol];
-
-		if (curCell.row === newRow && curCell.col === newCol) {
-			downSelected.value = !downSelected.value;
-		}
-
-		curCell.row = newRow;
-		curCell.col = newCol;
-
-		for (let r = 0; r < gridSize.rows; r++) {
-			for (let c = 0; c < gridSize.cols; c++) {
-				grid.value[r][c].isSelected = r === newRow && c === newCol;
-			}
-		}
-
-		let clueId = downSelected.value ? cell.downClueId : cell.acrossClueId;
-
-		if (clueId == null) {
-			clueId = !downSelected.value ? cell.downClueId : cell.acrossClueId;
-			downSelected.value = !downSelected.value;
-		}
-
-		if (downSelected.value) {
-			selectedDownId.value = clueId;
-			selectedAcrossId.value = null;
-			nextCell.row = curCell.row + 1;
-			nextCell.col = curCell.col;
-		} else {
-			selectedAcrossId.value = clueId;
-			selectedDownId.value = null;
-			nextCell.row = curCell.row;
-			nextCell.col = curCell.col + 1;
-		}
-
-		if (
-			nextCell.row >= gridSize.rows ||
-			nextCell.col >= gridSize.cols ||
-			grid.value[nextCell.row][nextCell.col].isBlock
-		) {
-			nextCell.row = -1;
-			nextCell.col = -1;
-		}
-
-		highlightByClue(downSelected.value, clueId);
-	}
-
-	function handleClueSelected(clue) {
-		if (clue.down) {
-			selectedDownId.value = clue.id;
-			selectedAcrossId.value = null;
-			downSelected.value = true;
-		} else {
-			selectedAcrossId.value = clue.id;
-			selectedDownId.value = null;
-			downSelected.value = false;
-		}
-
-		let first = null;
-		for (let r = 0; r < gridSize.rows; r++) {
-			for (let c = 0; c < gridSize.cols; c++) {
-				const cell = grid.value[r][c];
-				if (
-					(!clue.down && cell.acrossClueId === clue.id) ||
-					(clue.down && cell.downClueId === clue.id)
-				) {
-					first = cell;
-					break;
-				}
-			}
-			if (first) break;
-		}
-
-		if (first) {
-			curCell.row = first.row;
-			curCell.col = first.col;
-			for (let r = 0; r < gridSize.rows; r++) {
-				for (let c = 0; c < gridSize.cols; c++) {
-					grid.value[r][c].isSelected = r === first.row && c === first.col;
-				}
-			}
-		}
-		highlightByClue(clue.down, clue.id);
-	}
-
-	function clearHighlights() {
-		for (let r = 0; r < gridSize.rows; r++) {
-			for (let c = 0; c < gridSize.cols; c++) {
-				grid.value[r][c].isHighlighted = false;
-			}
-		}
-	}
-
-	function highlightByClue(down, clueId) {
-		clearHighlights();
-		if (clueId == 0) return;
-
-		for (let r = 0; r < gridSize.rows; r++) {
-			for (let c = 0; c < gridSize.cols; c++) {
-				const cell = grid.value[r][c];
-				if (c === curCell.col && r == curCell.row) {
-					continue;
-				}
-
-				if (down) {
-					if (cell.downClueId === clueId) {
-						cell.isHighlighted = true;
-					}
-				} else {
-					if (cell.acrossClueId === clueId) {
-						cell.isHighlighted = true;
-					}
-				}
-			}
-		}
-	}
-
-	function handleTyped(row, col) {
-		const step = 1;
-
-		const rows = gridSize.rows;
-		const cols = gridSize.cols;
-		const current = grid.value[row][col];
-
-		const isDown = downSelected.value;
-		const clueId = isDown ? current.downClueId : current.acrossClueId;
-		if (clueId == null) return;
-
-		let r = row;
-		let c = col;
-
-		if (isDown) r += step;
-		else c += step;
-
-		if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-
-		const nextCell = grid.value[r][c];
-
-		if (nextCell.isBlock) return null;
-
-		updateCellSelection(r, c);
-		return;
-	}
-
-	function handleArrowKey(row, col, key) {
-		const cell = grid.value[row][col];
-		//console.log(curCell);
-
-		const isDownAxis = key === "ArrowUp" || key === "ArrowDown";
-		const isCurrentDown = downSelected.value;
-		const isOrthogonal = isDownAxis !== isCurrentDown;
-
-		const hasAcross = cell.acrossClueId != null;
-		const hasDown = cell.downClueId != null;
-		const isCrossroad = hasAcross && hasDown;
-
-		if (isCrossroad && isOrthogonal) {
-			downSelected.value = !downSelected.value;
-			const newClueId = downSelected.value ? cell.downClueId : cell.acrossClueId;
-			highlightByClue(downSelected.value, newClueId);
-			return;
-		}
-
-		let targetRow = row;
-		let targetCol = col;
-
-		if (key === "ArrowUp") targetRow--;
-		if (key === "ArrowDown") targetRow++;
-		if (key === "ArrowLeft") targetCol--;
-		if (key === "ArrowRight") targetCol++;
-
-		if (
-			targetRow < 0 ||
-			targetRow >= gridSize.rows ||
-			targetCol < 0 ||
-			targetCol >= gridSize.cols
-		) {
-			return;
-		}
-
-		const targetCell = grid.value[targetRow][targetCol];
-		if (targetCell.isBlock) return;
-
-		updateCellSelection(targetRow, targetCol);
-
-		const clueId = downSelected.value ? targetCell.downClueId : targetCell.acrossClueId;
-
-		if (clueId != null) {
-			highlightByClue(downSelected.value, clueId);
-		}
-	}
-
-	function findPrevInClue(row, col) {
-		const rows = gridSize.rows;
-		const cols = gridSize.cols;
-		const current = grid.value[row][col];
-
-		const isDown = downSelected.value;
-		const clueId = isDown ? current.downClueId : current.acrossClueId;
-		if (clueId == null) return null;
-
-		let r = row;
-		let c = col;
-
-		if (isDown) r -= 1;
-		else c -= 1;
-
-		if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
-
-		const cell = grid.value[r][c];
-		if (cell.isBlock) return null;
-
-		return { row: r, col: c };
-	}
-
-	function handleBackspace(row, col) {
-		curCell.row = row;
-		curCell.col = col;
-
-		if (grid.value[row][col].value == "") {
-			const prev = findPrevInClue(row, col);
-
-			if (prev) {
-				grid.value[prev.row][prev.col].value = "";
-				updateCellSelection(prev.row, prev.col);
-				return;
-			}
-		}
-		grid.value[row][col].value = "";
 	}
 
 	function handleCrosswordSolved() {
@@ -370,7 +56,7 @@ import { addSolve } from "@/composables/useXW";
 	<BContainer class="mb-5 crossword-shell">
 		<BRow class="justify-content-end mb-2">
 			<BCol cols="auto">
-				<div class="xw-timer" :class="timerClass" aria-live="polite">{{ timerDisplay }}</div>
+				<CrosswordTimer :display="timerDisplay" :state="timerClass" />
 			</BCol>
 		</BRow>
 		<BRow class="g-4">
@@ -420,26 +106,5 @@ import { addSolve } from "@/composables/useXW";
 
 	#xw_grid {
 		min-width: 360px;
-	}
-
-	.xw-timer {
-		font-family: var(--font-heading);
-		font-size: 1.25rem;
-		font-weight: 700;
-		padding: 0.35rem 0.9rem;
-		border-radius: 12px;
-		border: 2px solid var(--border);
-		background: var(--card);
-		min-width: 96px;
-		text-align: center;
-		transition: color 150ms ease;
-	}
-
-	.xw-timer.countdown {
-		color: #c62828;
-	}
-
-	.xw-timer.running {
-		color: var(--accent-strong);
 	}
 </style>

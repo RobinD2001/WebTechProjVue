@@ -1,5 +1,5 @@
 <script setup>
-	import { ref, computed, watch, nextTick } from "vue";
+	import { useCellInput } from "@/composables/xw/useCellInput";
 
 	const props = defineProps({
 		cell: {
@@ -14,86 +14,17 @@
 
 	const emit = defineEmits(["update:value", "update:isSelected", "typed", "move", "backspace"]);
 
-	const inputRef = ref(null);
-
-	const displayValue = computed({
-		get() {
-			return props.cell.value;
-		},
-		set(val) {
-			const prev = props.cell.value;
-			const next = val || "";
-			emit("update:value", next);
-			// Only treat as a "typed" action when something is entered
-			if (next) {
-				emit("typed", { previous: prev, current: next });
-			}
-		},
-	});
-
-	const isSelected = computed({
-		get() {
-			return props.cell.isSelected;
-		},
-		set(val) {
-			emit("update:isSelected", true);
-		},
-	});
-
-	function onKeydown(e) {
-		if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-			e.preventDefault();
-			emit("move", e.key);
-			return;
-		}
-		if (e.key === "Backspace") {
-			e.preventDefault();
-			emit("backspace");
-			return;
-		}
-	}
-
-	function onTab(){
-		console.log("Tab pressed");
-		interacted();
-	}
-
-	watch(
-		() => props.isActive,
-		(active) => {
-			if (active) {
-				nextTick(() => {
-					if (inputRef.value) {
-						inputRef.value.focus();
-						inputRef.value.select?.(); // optional: highlight existing letter
-					}
-				});
-			}
-		},
-		{ immediate: true } // optional: focus the very first active cell on mount
-	);
-
-	const cellClasses = computed(() => {
-		return {
-			"text-center": true,
-			"xw-cell-input": true,
-			"xw-cell-highlighted": props.cell.isHighlighted,
-			"xw-cell-selected": isSelected.value,
-			"xw-cell-block": props.cell.isBlock,
-		};
-	});
-
-	function interacted() {
-		isSelected.value = !isSelected.value;		
-	}
-
-	const cellAriaLabel = computed(() => {
-		const rowNumber = props.cell.row + 1;
-		const colNumber = props.cell.col + 1;
-		const clueInfo = props.cell.clueNumber ? `, clue ${props.cell.clueNumber}` : "";
-		const contentState = props.cell.value ? `, contains '${props.cell.value}'` : ", empty";
-		return `Crossword cell row ${rowNumber}, column ${colNumber}${clueInfo}${contentState}`;
-	});
+	const {
+		inputRef,
+		displayValue,
+		isSelected,
+		cellClasses,
+		cellAriaLabel,
+		onBeforeInput,
+		onKeydown,
+		onTab,
+		interacted,
+	} = useCellInput(props, emit);
 </script>
 <template>
 	<div class="xw-cell-wrapper" :aria-hidden="cell.isBlock" role="presentation">
@@ -112,6 +43,7 @@
 				maxlength="1"
 				:class="cellClasses"
 				:aria-label="cellAriaLabel"
+				@beforeinput="onBeforeInput"
 				@keydown="onKeydown"
 				@keydown.tab.prevent="onTab" />
 		</div>
@@ -163,7 +95,7 @@
 	}
 
 	.xw-cell-block {
-		background-color: #2D4F39;
+		background-color: #2d4f39;
 	}
 
 	.xw-cell-clue {

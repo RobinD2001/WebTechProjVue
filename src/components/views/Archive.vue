@@ -23,7 +23,7 @@
 		try {
 			const info = await getXWInfo(date);
 			difficulty.value = info?.difficulty ?? "unknown";
-			averageTime.value = info?.avgTime.substring(2, 4) ?? "99:99";
+			averageTime.value = info?.avgTime ?? "99:99";
 		} catch (err) {
 			console.error("Failed to load crossword info", err);
 		}
@@ -75,7 +75,7 @@
 						</div>
 						<div class="stat">
 							<span class="label">Average time</span>
-							<strong>{{ averageTime }}s</strong>
+							<strong>{{ averageTime }}</strong>
 						</div>
 					</BCol>
 				</BRow>

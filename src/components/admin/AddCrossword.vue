@@ -1,13 +1,13 @@
 <script setup>
-	import { ref, reactive, computed } from "vue";
+	import { ref, reactive, computed, watch } from "vue";
 	import GridVisualizer from "@/components/admin/GridVisualizer.vue";
 	import { addCrosswordToDB } from "@/composables/useXW";
 
 	const clues = ref([]);
-	const today = new Date().toISOString().split("T")[0];
-	const releaseDate = ref(today);
+	const getTodayString = () => new Date().toISOString().split("T")[0];
+	const releaseDate = ref(getTodayString());
 	const visibility = ref("private");
-	const difficulty = ref("Monday");
+	const difficulty = ref("easy");
 	const showAlert = ref(false);
 	const alertVariant = ref("success");
 	const alertMessage = ref("");
@@ -23,6 +23,18 @@
 		const { rows, cols, cells } = buildGrid(clues.value);
 		return { rows, cols, cells };
 	});
+
+	const isReleaseDateDisabled = computed(() => visibility.value === "private");
+
+	watch(
+		visibility,
+		(currentVisibility) => {
+			if (currentVisibility === "private") {
+				releaseDate.value = getTodayString();
+			}
+		},
+		{ immediate: true }
+	);
 
 	function buildGrid(clueList) {
 		if (!clueList.length) return { rows: 0, cols: 0, cells: [], startNumbers: new Map() };
@@ -136,7 +148,7 @@
 			const res = await addCrosswordToDB({
 				clues: clues.value,
 				releaseDate: releaseDate.value,
-				visibility: visibility.value,
+				isPublic: visibility.value !== "private",
 				difficulty: difficulty.value,
 			});
 			openAlert("success", res?.message || "Crossword uploaded successfully.");
@@ -214,8 +226,17 @@
 				<BRow class="mb-3">
 					<BCol>
 						<BInputGroup>
-							<BInputGroupText>Release date</BInputGroupText>
-							<BFormInput v-model="releaseDate" type="date" />
+							<BInputGroupText
+								v-if="isReleaseDateDisabled"
+								:class="{ 'release-date-disabled': true }"
+								>Created at</BInputGroupText
+							>
+							<BInputGroupText v-else>Release date</BInputGroupText>
+							<BFormInput
+								v-model="releaseDate"
+								type="date"
+								:disabled="isReleaseDateDisabled"
+								:class="{ 'release-date-disabled': isReleaseDateDisabled }" />
 						</BInputGroup>
 					</BCol>
 					<BCol>
@@ -225,25 +246,20 @@
 								v-model="visibility"
 								:options="[
 									{ value: 'private', text: 'Private' },
-									{ value: 'scheduled', text: 'Scheduled' },
-									{ value: 'public', text: 'Public' },
+									{ value: 'scheduled', text: 'Schedule' },
 								]" />
 						</BFormGroup>
 					</BCol>
 				</BRow>
 				<BRow class="mb-3">
 					<BCol>
-						<BFormGroup label="Difficulty (day of week)">
+						<BFormGroup label="Difficulty">
 							<BFormSelect
 								v-model="difficulty"
 								:options="[
-									'Monday',
-									'Tuesday',
-									'Wednesday',
-									'Thursday',
-									'Friday',
-									'Saturday',
-									'Sunday',
+									{ value: 'easy', text: 'Easy' },
+									{ value: 'medium', text: 'Medium' },
+									{ value: 'hard', text: 'Hard' },
 								]" />
 						</BFormGroup>
 					</BCol>
@@ -252,3 +268,14 @@
 		</BRow>
 	</section>
 </template>
+
+<style scoped>
+	.release-date-disabled {
+		background-color: #f1f3f5 !important;
+		color: #6c757d !important;
+		border-color: #d0d5dc !important;
+		cursor: not-allowed;
+		opacity: 1;
+		transition: none;
+	}
+</style>
