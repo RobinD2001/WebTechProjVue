@@ -32,6 +32,13 @@ export function apiPost(path, body) {
 	});
 }
 
+export function apiPut(path, body) {
+	return apiRequest(path, {
+		method: "PUT",
+		body: JSON.stringify(body),
+	});
+}
+
 export function apiGet(path) {
 	return apiRequest(path, {
 		method: "GET",
