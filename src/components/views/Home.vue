@@ -1,26 +1,36 @@
 <script setup>
-	import { ref } from "vue";
-	import Preview from "@/components/xw/Preview.vue";
-	import Auth from "@/components/auth/Auth.vue";
+import { onMounted, ref } from "vue";
+import { getDailyLeaderboard } from "@/composables/useStats";
+import Preview from "@/components/xw/Preview.vue";
+import Auth from "@/components/auth/Auth.vue";
+import LeaderboardList from "@/components/leaderboard/LeaderboardList.vue";
 
-	const showAuth = ref(false);
-	const openAuth = () => {
-		showAuth.value = true;
-	};
+const showAuth = ref(false);
+const leaderboard = ref([]);
+const loadingLeaderboard = ref(false);
+const errorLeaderboard = ref("");
 
-	const leaderboard = [
-		{ rank: 1, player: "PuzzleMaster22", time: "00:23" },
-		{ rank: 2, player: "Roxy", time: "00:25" },
-		{ rank: 3, player: "User #128", time: "00:28" },
-		{ rank: 4, player: "Jo", time: "00:30" },
-		{ rank: 5, player: "QuickSolve", time: "00:33" },
-	];
+const openAuth = () => {
+	showAuth.value = true;
+};
 
-	const tableFields = [
-		{ key: "rank", label: "Rank" },
-		{ key: "player", label: "Player" },
-		{ key: "time", label: "Time" },
-	];
+async function loadMiniLeaderboard() {
+	loadingLeaderboard.value = true;
+	errorLeaderboard.value = "";
+	try {
+		const data = await getDailyLeaderboard();
+		leaderboard.value = data?.leaderboard || [];
+	} catch (err) {
+		errorLeaderboard.value = err?.message || "Failed to load leaderboard.";
+		leaderboard.value = [];
+	} finally {
+		loadingLeaderboard.value = false;
+	}
+}
+
+onMounted(() => {
+	loadMiniLeaderboard();
+});
 </script>
 
 <template>
@@ -48,20 +58,19 @@
 			</BCol>
 
 			<BCol lg="5">
-				<BCard class="panel h-100">
-					<h3 class="mb-3">Today's Fastest Solvers</h3>
-					<BTable
-						:items="leaderboard"
-						:fields="tableFields"
-						small
-						responsive
-						striped
-						class="mb-2" />
-					<BButton variant="text" class="link-btn" @click="openAuth">
-						Log in to track your stats →
-					</BButton>
-					<Auth v-model="showAuth" />
-				</BCard>
+				<LeaderboardList
+					variant="daily"
+					:items="leaderboard"
+					:loading="loadingLeaderboard"
+					:error="errorLeaderboard"
+					:limit="5">
+					<template #footer>
+						<BButton variant="text" class="link-btn mt-2" @click="openAuth">
+							Log in to track your stats →
+						</BButton>
+						<Auth v-model="showAuth" />
+					</template>
+				</LeaderboardList>
 			</BCol>
 		</BRow>
 
