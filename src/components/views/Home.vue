@@ -1,42 +1,42 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { getDailyLeaderboard } from "@/composables/useStats";
-import Preview from "@/components/xw/Preview.vue";
-import Auth from "@/components/auth/Auth.vue";
-import LeaderboardList from "@/components/leaderboard/LeaderboardList.vue";
+	import { onMounted, ref } from "vue";
+	import { getDailyLeaderboard } from "@/composables/useStats";
+	import Preview from "@/components/xw/Preview.vue";
+	import Auth from "@/components/auth/Auth.vue";
+	import LeaderboardList from "@/components/leaderboard/LeaderboardList.vue";
 
-const showAuth = ref(false);
-const leaderboard = ref([]);
-const loadingLeaderboard = ref(false);
-const errorLeaderboard = ref("");
+	const showAuth = ref(false);
+	const leaderboard = ref([]);
+	const loadingLeaderboard = ref(false);
+	const errorLeaderboard = ref("");
 
-const openAuth = () => {
-	showAuth.value = true;
-};
+	const openAuth = () => {
+		showAuth.value = true;
+	};
 
-async function loadMiniLeaderboard() {
-	loadingLeaderboard.value = true;
-	errorLeaderboard.value = "";
-	try {
-		const data = await getDailyLeaderboard();
-		leaderboard.value = data?.leaderboard || [];
-	} catch (err) {
-		errorLeaderboard.value = err?.message || "Failed to load leaderboard.";
-		leaderboard.value = [];
-	} finally {
-		loadingLeaderboard.value = false;
+	async function loadMiniLeaderboard() {
+		loadingLeaderboard.value = true;
+		errorLeaderboard.value = "";
+		try {
+			const data = await getDailyLeaderboard();
+			leaderboard.value = data?.leaderboard || [];
+		} catch (err) {
+			errorLeaderboard.value = err?.message || "Failed to load leaderboard.";
+			leaderboard.value = [];
+		} finally {
+			loadingLeaderboard.value = false;
+		}
 	}
-}
 
-onMounted(() => {
-	loadMiniLeaderboard();
-});
+	onMounted(() => {
+		loadMiniLeaderboard();
+	});
 </script>
 
 <template>
 	<BContainer fluid class="home">
 		<section class="hero">
-			<p class="eyebrow">v0.15</p>
+			<p class="eyebrow">v0.19</p>
 			<h1>Daily Mini Crosswords</h1>
 			<p class="tagline">A fresh Mini every morning. Quick. Clever. Always free.</p>
 			<div class="hero-actions">
