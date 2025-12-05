@@ -18,6 +18,7 @@
 
 	const user = reactive({
 		name: "",
+		email: "",
 		password: "",
 	});
 
@@ -30,12 +31,23 @@
 
 	function clearForm() {
 		user.name = "";
+		user.email = "";
 		user.password = "";
 	}
 
+	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 	async function submitForm() {
-		if (!user.name || !user.password) {
-			emit("success", [false, "Please fill in both fields."]);
+		const missingEmail = !isLogin.value && !user.email;
+		const invalidEmail = !isLogin.value && user.email && !emailPattern.test(user.email);
+
+		if (!user.name || !user.password || missingEmail) {
+			emit("success", [false, "Please fill in all required fields."]);
+			return;
+		}
+
+		if (invalidEmail) {
+			emit("success", [false, "Please enter a valid email address."]);
 			return;
 		}
 
@@ -49,6 +61,7 @@
 				  })
 				: await register({
 						name: user.name,
+						email: user.email,
 						password: user.password,
 				  });
 
@@ -76,7 +89,7 @@
 			</p>
 		</div>
 
-		<BFormGroup label="Name" class="mb-3">
+		<BFormGroup label="Name(*)" class="mb-3">
 			<BFormInput
 				class="auth-name"
 				v-model="user.name"
@@ -88,7 +101,19 @@
 				placeholder="Enter your name" />
 		</BFormGroup>
 
-		<BFormGroup label="Password" class="mb-3">
+		<BFormGroup v-if="!isLogin" label="Email" class="mb-3">
+			<BFormInput
+				class="auth-email"
+				v-model="user.email"
+				type="email"
+				required
+				autocomplete="email"
+				aria-required="false"
+				aria-label="Email"
+				placeholder="Enter your email" />
+		</BFormGroup>
+
+		<BFormGroup label="Password(*)" class="mb-3">
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
@@ -114,37 +139,33 @@
 		<div class="text-center small">
 			<span v-if="isLogin">
 				Not a member yet?
-				<button type="button" class="toggle-btn" @click="toggleAuth">
-					Register
-				</button>
+				<button type="button" class="toggle-btn" @click="toggleAuth">Register</button>
 			</span>
 			<span v-else>
 				Already a member?
-				<button type="button" class="toggle-btn" @click="toggleAuth">
-					Login
-				</button>
+				<button type="button" class="toggle-btn" @click="toggleAuth">Login</button>
 			</span>
 		</div>
 	</BForm>
 </template>
 
 <style scoped>
-.toggle-btn {
-	background: transparent;
-	border: none;
-	color: var(--bs-primary);
-	padding: 0;
-	font-size: 0.875rem;
-	text-decoration: none;
-	cursor: pointer;
-}
+	.toggle-btn {
+		background: transparent;
+		border: none;
+		color: var(--bs-primary);
+		padding: 0;
+		font-size: 0.875rem;
+		text-decoration: none;
+		cursor: pointer;
+	}
 
-.toggle-btn:focus,
-.toggle-btn:active,
-.toggle-btn:hover {
-	color: var(--bs-primary);
-	outline: none;
-	box-shadow: none;
-	text-decoration: underline;
-}
+	.toggle-btn:focus,
+	.toggle-btn:active,
+	.toggle-btn:hover {
+		color: var(--bs-primary);
+		outline: none;
+		box-shadow: none;
+		text-decoration: underline;
+	}
 </style>

@@ -1,14 +1,15 @@
 <script setup>
-	import { ref, watch } from "vue";
+	import { computed, ref, watch } from "vue";
 	import Cell from "@/components/xw/Cell.vue";
 	import CluesWrapper from "@/components/xw/CluesWrapper.vue";
 	import WinnerModal from "./WinnerModal.vue";
 	import CrosswordTimer from "./CrosswordTimer.vue";
-	import { addSolve } from "@/composables/useXW";
+	import { addSolve, getXWInfo } from "@/composables/useXW";
 	import { useGridFactory } from "@/composables/xw/useGridFactory";
 	import { useSelection } from "@/composables/xw/useSelection";
 	import { useNavigation } from "@/composables/xw/useNavigation";
 	import { useCrosswordTimer } from "@/composables/xw/useCrosswordTimer";
+	import { useAuth } from "@/composables/useAuth";
 
 	const props = defineProps({
 		date: String,
@@ -19,25 +20,47 @@
 	const { grid, gridSize, setGrid, checkValidation } = useGridFactory();
 	const selection = useSelection(grid, gridSize);
 	const navigation = useNavigation(grid, gridSize, selection);
-	const { timerDisplay, timerClass, startCountdown, stopTimer, elapsedMs } = useCrosswordTimer();
+	const { timerDisplay, timerClass, startTimer, stopTimer, elapsedMs } = useCrosswordTimer();
+	const { isAuthenticated } = useAuth();
+	const puzzleInfo = ref(null);
+	const puzzleId = computed(() => puzzleInfo.value?.id ?? props.date ?? "unknown");
 
-	const {
-		curCell,
-		nextCell,
-		downSelected,
-		selectedAcrossId,
-		selectedDownId,
-		updateCellSelection,
-		handleClueSelected,
-	} = selection;
+	const { curCell, selectedAcrossId, selectedDownId, updateCellSelection, handleClueSelected } =
+		selection;
 
 	const { handleTyped, handleArrowKey, handleBackspace } = navigation;
 
+	const formattedElapsed = computed(() => {
+		const totalSeconds = Math.floor((elapsedMs.value ?? 0) / 1000);
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60)
+			.toString()
+			.padStart(2, "0");
+		const seconds = Math.floor(totalSeconds % 60)
+			.toString()
+			.padStart(2, "0");
+		if (hours > 0) {
+			return `${hours}:${minutes}:${seconds}`;
+		}
+		return `${minutes}:${seconds}`;
+	});
+
 	watch(
 		() => props.date,
-		() => {
-			startCountdown();
-		}
+		async () => {
+			try {
+				if (!props.date) {
+					puzzleInfo.value = null;
+				} else {
+					puzzleInfo.value = await getXWInfo(props.date);
+				}
+			} catch (err) {
+				console.error("Failed to load puzzle info", err);
+				puzzleInfo.value = null;
+			}
+			startTimer();
+		},
+		{ immediate: true }
 	);
 
 	function updateCellValue(row, col, newValue) {
@@ -45,10 +68,26 @@
 		checkValidation();
 	}
 
+	function persistSolveLocally() {
+		const existingRaw = localStorage.getItem("solves");
+		const existing = existingRaw ? JSON.parse(existingRaw) : [];
+		const next = Array.isArray(existing) ? existing : [];
+
+		next.push({
+			id: puzzleId.value,
+			timeMs: elapsedMs.value,
+			recordedAt: new Date().toISOString(),
+			releaseDate: props.date ?? null,
+		});
+
+		localStorage.setItem("solves", JSON.stringify(next));
+	}
+
 	function handleCrosswordSolved() {
 		stopTimer();
 		showWinner.value = true;
 		addSolve(elapsedMs.value, props.date);
+		persistSolveLocally();
 	}
 </script>
 
@@ -90,7 +129,11 @@
 				@crosswordSolved="handleCrosswordSolved" />
 		</BRow>
 	</BContainer>
-	<WinnerModal v-model="showWinner" />
+	<WinnerModal
+		v-model="showWinner"
+		:time-display="formattedElapsed"
+		:is-authenticated="isAuthenticated"
+		:puzzle-id="puzzleId" />
 </template>
 
 <style scoped>
