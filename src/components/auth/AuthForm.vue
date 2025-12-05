@@ -75,6 +75,8 @@
 			submitting.value = false;
 		}
 	}
+
+	const isNeeded = (label) => (isLogin.value ? label : label + "(*)");
 </script>
 
 <template>
@@ -89,7 +91,7 @@
 			</p>
 		</div>
 
-		<BFormGroup label="Name(*)" class="mb-3">
+		<BFormGroup :label="isNeeded('Name')" class="mb-3">
 			<BFormInput
 				class="auth-name"
 				v-model="user.name"
@@ -113,7 +115,7 @@
 				placeholder="Enter your email" />
 		</BFormGroup>
 
-		<BFormGroup label="Password(*)" class="mb-3">
+		<BFormGroup :label="isNeeded('Password')" class="col mb-3">
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
@@ -123,6 +125,9 @@
 				aria-required="true"
 				aria-label="Password"
 				placeholder="Enter your password" />
+			<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
+				<button type="button" class="toggle-btn" @click="">Forgot your password?</button>
+			</div>
 		</BFormGroup>
 
 		<div class="d-grid mb-3">
@@ -167,5 +172,9 @@
 		outline: none;
 		box-shadow: none;
 		text-decoration: underline;
+	}
+
+	.forgot-password {
+		display: block;
 	}
 </style>

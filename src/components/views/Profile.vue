@@ -1,10 +1,14 @@
 <script setup>
 	import { onMounted, ref, computed } from "vue";
+	import { useRouter } from "vue-router";
 	import { useAuth } from "@/composables/useAuth";
 	import { getStats } from "@/composables/useStats";
 	import { resolveUsername } from "@/utils/user";
+	import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+	import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 	const { logout, user } = useAuth();
+	const router = useRouter();
 
 	const stats = ref(null);
 	const loading = ref(false);
@@ -13,6 +17,14 @@
 	const statsApi = getStats();
 
 	const username = computed(() => resolveUsername(user.value) ?? "Guest");
+
+	const goBack = () => {
+		if (window?.history?.length > 1) {
+			router.back();
+		} else {
+			router.push({ name: "home" });
+		}
+	};
 
 	function formatDate(value) {
 		if (!value) return "—";
@@ -49,7 +61,16 @@
 
 <template>
 	<BContainer class="profile-page py-4">
-		<BRow class="align-items-center mb-4">
+		<BRow class="align-items-center mb-4 g-3">
+			<BCol cols="auto">
+				<BButton
+					variant="outline-dark"
+					class="back-btn"
+					aria-label="Go back"
+					@click="goBack">
+					<FontAwesomeIcon :icon="faChevronLeft" />
+				</BButton>
+			</BCol>
 			<BCol>
 				<h1 class="mb-2">Profile</h1>
 				<p class="mb-0">Welcome back, {{ username }}.</p>
@@ -108,6 +129,19 @@
 <style scoped>
 	.profile-page {
 		max-width: 900px;
+	}
+
+	.back-btn {
+		width: 2em;
+		height: 2em;
+		border-radius: 50%;
+		font-size: 1.4rem;
+		font-weight: 700;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 0.4em;
+		margin-bottom: 1.5em;
 	}
 
 	.stats-grid {
