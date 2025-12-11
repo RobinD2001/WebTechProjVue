@@ -1,10 +1,14 @@
 <script setup>
 	import { computed, ref, reactive } from "vue";
+	import { useRoute, useRouter } from "vue-router";
 	import { useI18n } from "vue-i18n";
 	import { useAuth } from "@/composables/useAuth";
+	import { DEFAULT_LOCALE } from "@/i18n";
 
 	const { login, register } = useAuth();
 	const { t } = useI18n();
+	const route = useRoute();
+	const router = useRouter();
 
 	const props = defineProps({
 		isLogin: {
@@ -13,17 +17,17 @@
 		},
 	});
 
-	const emit = defineEmits(["success", "modeChange"]);
+	const emit = defineEmits(["success", "modeChange", "close"]);
 
 	const isLogin = ref(props.isLogin);
-	const authTypeLabel = computed(() =>
-		isLogin.value ? t("auth.login") : t("auth.register")
-	);
+	const authTypeLabel = computed(() => (isLogin.value ? t("auth.login") : t("auth.register")));
+	const locale = computed(() => (route.params.locale ? route.params.locale : DEFAULT_LOCALE));
 
 	const user = reactive({
 		name: "",
 		email: "",
 		password: "",
+		confirmPassword: "",
 	});
 
 	const submitting = ref(false);
@@ -33,25 +37,48 @@
 		emit("modeChange", isLogin.value);
 	}
 
+	function goToForgotPassword() {
+		emit("close");
+		router.push({ name: "pwforgot", params: { locale: locale.value } });
+	}
+
 	function clearForm() {
 		user.name = "";
 		user.email = "";
 		user.password = "";
+		user.confirmPassword = "";
 	}
 
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 	async function submitForm() {
 		const missingEmail = !isLogin.value && !user.email;
+		const missingConfirm = !isLogin.value && !user.confirmPassword;
 		const invalidEmail = !isLogin.value && user.email && !emailPattern.test(user.email);
+		const passwordTooShort = !isLogin.value && user.password && user.password.length < 8;
+		const passwordMismatch =
+			!isLogin.value &&
+			user.password &&
+			user.confirmPassword &&
+			user.password !== user.confirmPassword;
 
-		if (!user.name || !user.password || missingEmail) {
+		if (!user.name || !user.password || missingEmail || missingConfirm) {
 			emit("success", [false, t("auth.errorMissing")]);
 			return;
 		}
 
 		if (invalidEmail) {
 			emit("success", [false, t("auth.errorEmail")]);
+			return;
+		}
+
+		if (passwordTooShort) {
+			emit("success", [false, t("passwordUpdate.errorLength")]);
+			return;
+		}
+
+		if (passwordMismatch) {
+			emit("success", [false, t("passwordUpdate.errorMatch")]);
 			return;
 		}
 
@@ -84,19 +111,14 @@
 		}
 	}
 
-	const labelWithRequired = (key) =>
-		isLogin.value ? t(key) : `${t(key)}(*)`;
+	const labelWithRequired = (key) => (isLogin.value ? t(key) : `${t(key)}(*)`);
 </script>
 
 <template>
 	<BForm @submit.prevent="submitForm" novalidate :aria-busy="submitting">
 		<div class="mb-3 text-center">
 			<p class="text-muted mb-0">
-				{{
-					isLogin
-						? $t("auth.introLogin")
-						: $t("auth.introRegister")
-				}}
+				{{ isLogin ? $t("auth.introLogin") : $t("auth.introRegister") }}
 			</p>
 		</div>
 
@@ -112,7 +134,7 @@
 				:placeholder="$t('auth.placeholders.name')" />
 		</BFormGroup>
 
-		<BFormGroup v-if="!isLogin" :label="$t('auth.labels.email')" class="mb-3">
+		<BFormGroup v-if="!isLogin" :label="labelWithRequired('auth.labels.email')" class="mb-3">
 			<BFormInput
 				class="auth-email"
 				v-model="user.email"
@@ -128,17 +150,32 @@
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
+			type="password"
+			required
+			:autocomplete="isLogin ? 'current-password' : 'new-password'"
+			aria-required="true"
+			:aria-label="$t('auth.labels.password')"
+			:placeholder="$t('auth.placeholders.password')" />
+		<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
+			<button type="button" class="toggle-btn" @click="goToForgotPassword">
+				{{ $t("auth.forgotPassword") }}
+			</button>
+		</div>
+	</BFormGroup>
+
+		<BFormGroup
+			v-if="!isLogin"
+			:label="labelWithRequired('auth.labels.confirmPassword')"
+			class="col mb-3">
+			<BFormInput
+				class="auth-password-confirm"
+				v-model="user.confirmPassword"
 				type="password"
 				required
-				autocomplete="current-password"
+				autocomplete="new-password"
 				aria-required="true"
-				:aria-label="$t('auth.labels.password')"
-				:placeholder="$t('auth.placeholders.password')" />
-			<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
-				<button type="button" class="toggle-btn" @click="">
-					{{ $t("auth.forgotPassword") }}
-				</button>
-			</div>
+				:aria-label="$t('auth.labels.confirmPassword')"
+				:placeholder="$t('auth.placeholders.confirmPassword')" />
 		</BFormGroup>
 
 		<div class="d-grid mb-3">

@@ -145,12 +145,14 @@
 		"labels": {
 			"name": "Name",
 			"email": "Email",
-			"password": "Password"
+			"password": "Password",
+			"confirmPassword": "Confirm password"
 		},
 		"placeholders": {
 			"name": "Enter your name",
 			"email": "Enter your email",
-			"password": "Enter your password"
+			"password": "Enter your password",
+			"confirmPassword": "Repeat your password"
 		},
 		"forgotPassword": "Forgot your password?",
 		"pleaseWait": "Please wait...",
@@ -163,6 +165,40 @@
 		"errorMissing": "Please fill in all required fields.",
 		"errorEmail": "Please enter a valid email address.",
 		"errorFailed": "{action} failed"
+	},
+	"passwordReset": {
+		"title": "Reset your password",
+		"description": "Enter the email linked to your account and we'll send you reset instructions.",
+		"labels": {
+			"email": "Email"
+		},
+		"placeholders": {
+			"email": "you@example.com"
+		},
+		"button": "Send reset link",
+		"sending": "Sending...",
+		"successFallback": "If the email exists, password reset instructions have been sent.",
+		"errorEmail": "Please enter a valid email address.",
+		"errorGeneric": "Unable to send reset request."
+	},
+	"passwordUpdate": {
+		"title": "Choose a new password",
+		"description": "Enter a strong password and confirm it to finish resetting your account.",
+		"labels": {
+			"password": "New password",
+			"confirm": "Confirm password"
+		},
+		"placeholders": {
+			"password": "Enter new password",
+			"confirm": "Repeat new password"
+		},
+		"button": "Update password",
+		"sending": "Updating...",
+		"success": "Password updated. You can now sign in.",
+		"errorRequired": "Please fill in both password fields.",
+		"errorLength": "Password should be at least 8 characters.",
+		"errorMatch": "Passwords do not match.",
+		"errorGeneric": "Could not update password."
 	},
 	"footer": {
 		"aboutTitle": "About Us",

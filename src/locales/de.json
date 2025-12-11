@@ -145,12 +145,14 @@
 		"labels": {
 			"name": "Name",
 			"email": "E-Mail",
-			"password": "Passwort"
+			"password": "Passwort",
+			"confirmPassword": "Passwort bestätigen"
 		},
 		"placeholders": {
 			"name": "Gib deinen Namen ein",
 			"email": "Gib deine E-Mail ein",
-			"password": "Gib dein Passwort ein"
+			"password": "Gib dein Passwort ein",
+			"confirmPassword": "Wiederhole dein Passwort"
 		},
 		"forgotPassword": "Passwort vergessen?",
 		"pleaseWait": "Bitte warten...",
@@ -163,6 +165,40 @@
 		"errorMissing": "Bitte alle Pflichtfelder ausfüllen.",
 		"errorEmail": "Bitte eine gültige E-Mail-Adresse eingeben.",
 		"errorFailed": "{action} fehlgeschlagen"
+	},
+	"passwordReset": {
+		"title": "Passwort zurücksetzen",
+		"description": "Gib die E-Mail-Adresse deines Kontos ein. Wir senden dir dann Anweisungen zum Zurücksetzen.",
+		"labels": {
+			"email": "E-Mail"
+		},
+		"placeholders": {
+			"email": "du@example.com"
+		},
+		"button": "Link zum Zurücksetzen senden",
+		"sending": "Sende...",
+		"successFallback": "Falls die E-Mail existiert, haben wir dir Anweisungen zum Zurücksetzen geschickt.",
+		"errorEmail": "Bitte eine gültige E-Mail-Adresse eingeben.",
+		"errorGeneric": "Zurücksetzen konnte nicht angefordert werden."
+	},
+	"passwordUpdate": {
+		"title": "Neues Passwort wählen",
+		"description": "Gib ein starkes Passwort ein und bestätige es, um den Reset abzuschließen.",
+		"labels": {
+			"password": "Neues Passwort",
+			"confirm": "Passwort bestätigen"
+		},
+		"placeholders": {
+			"password": "Neues Passwort eingeben",
+			"confirm": "Neues Passwort wiederholen"
+		},
+		"button": "Passwort aktualisieren",
+		"sending": "Aktualisiere...",
+		"success": "Passwort aktualisiert. Du kannst dich jetzt anmelden.",
+		"errorRequired": "Bitte beide Passwortfelder ausfüllen.",
+		"errorLength": "Das Passwort sollte mindestens 8 Zeichen haben.",
+		"errorMatch": "Die Passwörter stimmen nicht überein.",
+		"errorGeneric": "Passwort konnte nicht aktualisiert werden."
 	},
 	"footer": {
 		"aboutTitle": "Über uns",

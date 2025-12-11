@@ -10,6 +10,8 @@ import HowTo from "@/components/views/HowTo.vue";
 import NotFound from "@/components/layout/NotFound.vue";
 import { randomArchiveDate } from "@/utils/date";
 import i18n, { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/i18n";
+import ForgotPassword from "@/components/auth/ForgotPassword.vue";
+import ResetPassword from "@/components/auth/ResetPassword.vue";
 
 const ARCHIVE_START_DATE = "2025-12-01";
 
@@ -75,6 +77,17 @@ const routes = [
 		path: "/:locale(en|de)/404",
 		name: "404",
 		component: NotFound,
+	},
+	{
+		path: "/:locale(en|de)/forgotpassword",
+		name: "pwforgot",
+		component: ForgotPassword,
+	},
+	{
+		path: "/:locale(en|de)/resetpassword/:token",
+		name: "pwreset",
+		component: ResetPassword,
+		props: (route) => ({ token: route.params.token }),
 	},
 	{
 		path: "/:locale(en|de)/:catchAll(.*)*",

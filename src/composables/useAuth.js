@@ -33,11 +33,11 @@ async function authenticate(path, credentials) {
 
 export function useAuth() {
 	async function login(credentials) {
-		return authenticate("/api/login", credentials);
+		return authenticate("/api/auth/login", credentials);
 	}
 
 	async function register(credentials) {
-		return authenticate("/api/register", credentials);
+		return authenticate("/api/auth/register", credentials);
 	}
 
 	function logout() {
@@ -49,7 +49,7 @@ export function useAuth() {
 		if (!token.value) {
 			return { access: false, message: "No authentication token found." };
 		}
-		return apiAuth("/api/admincheck", `Bearer ${token.value}`);
+		return apiAuth("/api/auth/admincheck", `Bearer ${token.value}`);
 	}
 
 	return {
@@ -59,5 +59,25 @@ export function useAuth() {
 		register,
 		logout,
 		checkAdmin,
+	};
+}
+
+export function useAcct() {
+	async function forgotPassword(email) {
+		return apiPost("/api/acct/request-password-reset", {
+			email,
+		});
+	}
+
+	async function resetPassword(token, newPassword) {
+		return apiPost("/api/acct/reset-password", {
+			token,
+			newPassword,
+		});
+	}
+
+	return {
+		forgotPassword,
+		resetPassword,
 	};
 }

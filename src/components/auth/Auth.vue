@@ -90,6 +90,7 @@ function dismissAlert() {
       :isLogin="isLogin"
       @success="onFormSubmitted($event)"
       @modeChange="isLogin = $event"
+      @close="closeModal"
     />
     <BAlert
       :model-value="showAlert"
