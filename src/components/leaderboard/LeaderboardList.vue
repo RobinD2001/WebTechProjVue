@@ -13,8 +13,6 @@
 		title: { type: String, default: "" },
 		subtitle: { type: String, default: "" },
 		eyebrow: { type: String, default: "" },
-		badge: { type: String, default: "" },
-		badgeVariant: { type: String, default: "" },
 		emptyText: { type: String, default: "" },
 	});
 
@@ -25,8 +23,6 @@
 			eyebrow: t("leaderboardList.daily.eyebrow"),
 			title: t("leaderboardList.daily.title"),
 			subtitle: t("leaderboardList.daily.subtitle"),
-			badge: t("leaderboardList.daily.badge"),
-			badgeVariant: "primary",
 			emptyText: t("leaderboardList.daily.empty"),
 			fields: [
 				{
@@ -42,8 +38,6 @@
 			eyebrow: t("leaderboardList.weekly.eyebrow"),
 			title: t("leaderboardList.weekly.title"),
 			subtitle: t("leaderboardList.weekly.subtitle"),
-			badge: t("leaderboardList.weekly.badge"),
-			badgeVariant: "info",
 			emptyText: t("leaderboardList.weekly.empty"),
 			fields: [
 				{
@@ -85,10 +79,6 @@
 	});
 
 	const resolvedEyebrow = computed(() => props.eyebrow || resolvedVariant.value.eyebrow || "");
-	const resolvedBadge = computed(() => props.badge || resolvedVariant.value.badge || "");
-	const resolvedBadgeVariant = computed(
-		() => props.badgeVariant || resolvedVariant.value.badgeVariant || "primary"
-	);
 	const resolvedEmptyText = computed(
 		() =>
 			props.emptyText || resolvedVariant.value.emptyText || t("leaderboardList.weekly.empty")
@@ -131,9 +121,6 @@
 				<h3>{{ resolvedTitle }}</h3>
 				<p v-if="resolvedSubtitle" class="muted">{{ resolvedSubtitle }}</p>
 			</div>
-			<BBadge v-if="resolvedBadge" :variant="resolvedBadgeVariant" pill>{{
-				resolvedBadge
-			}}</BBadge>
 		</div>
 
 		<div v-if="loading" class="state">
