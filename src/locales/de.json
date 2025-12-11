@@ -173,7 +173,7 @@
 			"email": "E-Mail"
 		},
 		"placeholders": {
-			"email": "du@example.com"
+			"email": "{email}"
 		},
 		"button": "Link zum Zurücksetzen senden",
 		"sending": "Sende...",

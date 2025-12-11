@@ -1,13 +1,18 @@
 <script setup>
-	import { ref } from "vue";
+	import { computed, ref } from "vue";
 	import { useI18n } from "vue-i18n";
 	import { useAcct } from "@/composables/useAuth";
 
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { forgotPassword } = useAcct();
 	const email = ref("");
 	const submitting = ref(false);
 	const feedback = ref({ message: "", variant: "success" });
+	const emailPlaceholder = computed(() =>
+		t("passwordReset.placeholders.email", {
+			email: locale.value === "de" ? "du@example.com" : "you@example.com",
+		}),
+	);
 
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -69,7 +74,7 @@
 								id="reset-email"
 								v-model="email"
 								type="email"
-								:placeholder="t('passwordReset.placeholders.email')"
+								:placeholder="emailPlaceholder"
 								autocomplete="email"
 								:disabled="submitting"
 								required />

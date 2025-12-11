@@ -8,8 +8,10 @@ const backendTarget = "http://localhost:3000";
 const proxyPaths = ["/api", "/socket.io"];
 
 // https://vite.dev/config/
+const isProd = process.env.NODE_ENV === "production";
+
 export default defineConfig({
-	plugins: [vue(), vueDevTools()],
+	plugins: [vue(), !isProd && vueDevTools()].filter(Boolean),
 	resolve: {
 		alias: {
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
