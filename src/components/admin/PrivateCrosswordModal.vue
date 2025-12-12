@@ -2,6 +2,7 @@
 	import { ref, computed, onMounted, watch } from "vue";
 	import { getPrivateXWs, updateCrossword, getXWFromDate } from "@/composables/useXW";
 	import { useGridFactory } from "@/composables/xw/useGridFactory";
+	import { buildGridPayloadFromClues, emptyGridPayload } from "@/utils/clueGrid";
 
 	const props = defineProps({
 		modelValue: Boolean,
@@ -37,59 +38,6 @@
 		return 180 / gridSize.cols;
 	});
 
-	function buildPayloadFromClues(list) {
-		if (!list.length) {
-			return {
-				size: { rows: 0, cols: 0 },
-				clueNumbers: [],
-				acrossIds: [],
-				downIds: [],
-			};
-		}
-
-		let rows = 0;
-		let cols = 0;
-
-		for (const clue of list) {
-			const len = (clue.answer ?? "").length;
-			if (clue.is_across) {
-				rows = Math.max(rows, clue.row + 1);
-				cols = Math.max(cols, clue.col + len);
-			} else {
-				rows = Math.max(rows, clue.row + len);
-				cols = Math.max(cols, clue.col + 1);
-			}
-		}
-
-		const clueNumbers = Array.from({ length: rows }, () => Array(cols).fill(0));
-		const acrossIds = Array.from({ length: rows }, () => Array(cols).fill(null));
-		const downIds = Array.from({ length: rows }, () => Array(cols).fill(null));
-
-		for (const clue of list) {
-			const len = (clue.answer ?? "").length;
-			if (len === 0) continue;
-
-			if (clue.is_across) {
-				for (let i = 0; i < len; i++) {
-					acrossIds[clue.row][clue.col + i] = clue.id ?? clue.start_number;
-					if (i === 0) clueNumbers[clue.row][clue.col + i] = clue.start_number;
-				}
-			} else {
-				for (let i = 0; i < len; i++) {
-					downIds[clue.row + i][clue.col] = clue.id ?? clue.start_number;
-					if (i === 0) clueNumbers[clue.row + i][clue.col] = clue.start_number;
-				}
-			}
-		}
-
-		return {
-			size: { rows, cols },
-			clueNumbers,
-			acrossIds,
-			downIds,
-		};
-	}
-
 	async function loadCrosswords() {
 		loading.value = true;
 		error.value = null;
@@ -109,8 +57,6 @@
 		if (workingIds.value.has(cw.id)) return;
 		workingIds.value.add(cw.id);
 		try {
-			console.log(cw.id, props.selectedDate);
-
 			await updateCrossword(cw.id, true, props.selectedDate || cw.release_date);
 			crosswords.value = crosswords.value.filter((c) => c.id !== cw.id);
 			emit("added", cw);
@@ -128,7 +74,7 @@
 	async function loadPreviewForSelected() {
 		if (!selectedCrossword.value) {
 			clues.value = [];
-			setGrid({ size: { rows: 0, cols: 0 }, clueNumbers: [], acrossIds: [], downIds: [] });
+			setGrid(emptyGridPayload());
 			return;
 		}
 
@@ -136,13 +82,13 @@
 		previewError.value = null;
 		try {
 			clues.value = await getXWFromDate(selectedCrossword.value.release_date);
-			const payload = buildPayloadFromClues(clues.value);
+			const payload = buildGridPayloadFromClues(clues.value);
 			setGrid(payload);
 		} catch (err) {
 			console.error(err);
 			previewError.value = "Could not load preview.";
 			clues.value = [];
-			setGrid({ size: { rows: 0, cols: 0 }, clueNumbers: [], acrossIds: [], downIds: [] });
+			setGrid(emptyGridPayload());
 		} finally {
 			previewLoading.value = false;
 		}

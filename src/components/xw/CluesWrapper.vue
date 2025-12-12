@@ -21,8 +21,6 @@
 
 	async function loadClues(date) {
 		try {
-			//console.log(date);
-
 			clues.value = await getXWFromDate(date);
 		} catch (e) {
 			console.error("Error while getting Crossword data: ", e);
@@ -51,11 +49,7 @@
 	function aggregateValues(grid) {
 		const aggregated = {};
 
-		//if (!Array.isArray(grid)) return aggregated;
-
 		for (const row of grid) {
-			//if (!Array.isArray(row)) continue;
-
 			for (const cell of row) {
 				if (!cell || cell.isBlock) continue;
 
@@ -103,6 +97,7 @@
 			if (!clue.matches) finished = false;
 		}
 		if (finished) {
+			// Emit once all answers match to keep solve detection independent of UI state.
 			emit("crosswordSolved");
 		}
 

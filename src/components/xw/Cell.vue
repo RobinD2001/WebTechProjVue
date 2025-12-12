@@ -1,8 +1,5 @@
 <script setup>
 	import { useCellInput } from "@/composables/xw/useCellInput";
-	import { ref } from "vue";
-
-	const tilt = ref(Math.random() * 20 - 10);
 
 	const props = defineProps({
 		cell: {

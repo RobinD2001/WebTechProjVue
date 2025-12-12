@@ -43,6 +43,7 @@ export function useSelection(grid, gridSize) {
 		const cell = grid.value[newRow][newCol];
 
 		if (curCell.row === newRow && curCell.col === newCol) {
+			// Re-clicking the same cell flips direction to match common crossword UX.
 			downSelected.value = !downSelected.value;
 		}
 
@@ -58,6 +59,7 @@ export function useSelection(grid, gridSize) {
 		let clueId = downSelected.value ? cell.downClueId : cell.acrossClueId;
 
 		if (clueId == null) {
+			// If the active direction is missing, swap so the user is not stuck on blocks.
 			clueId = !downSelected.value ? cell.downClueId : cell.acrossClueId;
 			downSelected.value = !downSelected.value;
 		}

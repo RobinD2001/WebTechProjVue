@@ -1,6 +1,7 @@
 <script setup>
 	import { computed, ref, watch } from "vue";
 	import { useI18n } from "vue-i18n";
+	import { buildGridPayloadFromClues, emptyGridPayload } from "@/utils/clueGrid";
 
 	const props = defineProps({
 		selectedDownId: Number,
@@ -12,95 +13,12 @@
 	const acrossClues = ref([]);
 	const downClues = ref([]);
 	const allClues = ref([]);
+	const gridPayload = ref(emptyGridPayload());
 	const { t } = useI18n();
 
 	const gridSize = computed(() => {
-		if (allClues.value.length == 0) return { rows: 0, cols: 0 };
-
-		let bounds = { rows: 0, cols: 0 };
-
-		for (const c of allClues.value) {
-			let clueEnd = c.is_across
-				? { row: c.row, col: c.col + c.answer.length }
-				: { row: c.row + c.answer.length, col: c.col };
-
-			bounds.rows = Math.max(bounds.rows, clueEnd.row);
-			bounds.cols = Math.max(bounds.cols, clueEnd.col);
-		}
-
-		return { rows: bounds.rows, cols: bounds.cols };
+		return gridPayload.value.size || { rows: 0, cols: 0 };
 	});
-
-	function setIds() {
-		allClues.value.sort(
-			(a, b) => a.y * gridSize.value.cols + a.x - (b.y * gridSize.value.cols + b.x)
-		);
-
-		let sameCellClues = 0;
-		for (let i = 0; i < allClues.value.length; i++) {
-			allClues.value[i].id = i - sameCellClues;
-
-			if (
-				i > 0 &&
-				allClues.value[i].x === allClues.value[i - 1].x &&
-				allClues.value[i].y === allClues.value[i - 1].y
-			) {
-				allClues.value[i].id--;
-				sameCellClues++;
-			}
-
-			const clueNumber = allClues.value[i].id + 1;
-
-			if (allClues.value[i].across) {
-				acrossClues.value.push({ id: clueNumber, body: allClues.value[i].body });
-			} else {
-				downClues.value.push({ id: clueNumber, body: allClues.value[i].body });
-			}
-		}
-	}
-
-	function computeGrid() {
-		const { rows, cols } = gridSize.value;
-
-		const clueNumberGrid = [];
-		const acrossIdGrid = [];
-		const downIdGrid = [];
-
-		for (let r = 0; r < rows; r++) {
-			clueNumberGrid.push(Array(cols).fill(0));
-			acrossIdGrid.push(Array(cols).fill(null));
-			downIdGrid.push(Array(cols).fill(null));
-		}
-		//console.log(acrossIdGrid);
-
-		for (const clue of allClues.value) {
-			const { row, col, question, answer, is_across, start_number } = clue;
-
-			clueNumberGrid[row][col] = start_number;
-
-			if (is_across) {
-				for (let dx = 0; dx < answer.length; dx++) {
-					acrossIdGrid[row][col + dx] = start_number;
-				}
-				acrossClues.value.push(clue);
-			} else {
-				for (let dy = 0; dy < answer.length; dy++) {
-					downIdGrid[row + dy][col] = start_number;
-				}
-				downClues.value.push(clue);
-			}
-		}
-
-		acrossClues.value.sort((a, b) => a.start_number - b.start_number);
-		downClues.value.sort((a, b) => a.start_number - b.start_number);
-
-		emit("gridCalculated", {
-			size: { rows, cols },
-			clueNumbers: clueNumberGrid,
-			acrossIds: acrossIdGrid,
-			downIds: downIdGrid,
-		});
-	}
 
 	watch(
 		() => props.clues,
@@ -110,17 +28,19 @@
 			allClues.value = [...(newClues ?? [])];
 
 			if (allClues.value.length === 0) {
-				emit("gridCalculated", {
-					size: { rows: 0, cols: 0 },
-					clueNumbers: [],
-					acrossIds: [],
-					downIds: [],
-				});
+				gridPayload.value = emptyGridPayload();
+				emit("gridCalculated", gridPayload.value);
 				return;
 			}
 
-			//setIds();
-			computeGrid();
+			gridPayload.value = buildGridPayloadFromClues(allClues.value);
+			acrossClues.value = [...allClues.value.filter((c) => c.is_across)].sort(
+				(a, b) => a.start_number - b.start_number
+			);
+			downClues.value = [...allClues.value.filter((c) => !c.is_across)].sort(
+				(a, b) => a.start_number - b.start_number
+			);
+			emit("gridCalculated", gridPayload.value);
 		},
 		{ immediate: true }
 	);

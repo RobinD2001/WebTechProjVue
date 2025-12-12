@@ -38,8 +38,11 @@ export function useNavigation(grid, gridSize, selection) {
 		const isCrossroad = hasAcross && hasDown;
 
 		if (isCrossroad && isOrthogonal) {
+			// Users expect arrow keys to flip direction on intersections instead of jumping.
 			downSelected.value = !downSelected.value;
 			const newClueId = downSelected.value ? cell.downClueId : cell.acrossClueId;
+			selection.selectedDownId.value = downSelected.value ? newClueId : null;
+			selection.selectedAcrossId.value = downSelected.value ? null : newClueId;
 			selection.highlightByClue(downSelected.value, newClueId);
 			return;
 		}

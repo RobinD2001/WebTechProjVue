@@ -8,6 +8,7 @@ function refreshUserQuery() {
 	const username = resolveUsername();
 
 	if (!username) {
+		// Anonymous visitors still load leaderboards without leaking previous user info.
 		userQuery.value = "";
 		return;
 	}

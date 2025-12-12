@@ -2,6 +2,7 @@ import i18n from "@/i18n";
 
 function getLocaleHeader() {
 	const locale = i18n?.global?.locale?.value || "en";
+	// Propagate locale so backend can return translated content without extra params.
 	return { "X-Locale": locale };
 }
 
@@ -19,6 +20,7 @@ async function apiRequest(path, options = {}) {
 	try {
 		data = await res.json();
 	} catch (e) {
+		// Some endpoints return empty bodies (204) on success/failure.
 		data = null;
 	}
 

@@ -17,6 +17,7 @@ export function useCrosswordTimer() {
 	function startTimer() {
 		clearIntervals();
 		const startedAt = Date.now();
+		// Reset whenever a new crossword loads so elapsed time belongs to the active puzzle.
 		elapsedMs.value = 0;
 		elapsedInterval = setInterval(() => {
 			elapsedMs.value = Date.now() - startedAt;

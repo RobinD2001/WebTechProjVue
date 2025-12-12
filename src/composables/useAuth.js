@@ -12,6 +12,7 @@ const isAuthenticated = computed(() => !!user.value);
 function setUser(newUser) {
 	user.value = newUser;
 	if (newUser) {
+		// Persist user info to survive refresh; this keeps UI reactive on reloads.
 		saveStoredUser(newUser);
 	} else {
 		clearStoredUser();
@@ -20,6 +21,7 @@ function setUser(newUser) {
 
 function setToken(newToken) {
 	token.value = newToken || null;
+	// Token is needed before we can sync solves created while logged out.
 	writeString(STORAGE_KEYS.token, token.value);
 }
 

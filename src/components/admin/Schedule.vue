@@ -61,7 +61,6 @@
 				try {
 					const info = await getXWInfo(entry.date);
 					const isPublic = info?.isPublic;
-					console.log(entry.date, isPublic);
 
 					if (!isPublic) {
 						entry.status = "Private";

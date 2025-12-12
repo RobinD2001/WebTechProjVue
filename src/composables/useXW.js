@@ -13,6 +13,7 @@ export async function addSolve(timeInMs, releaseDate) {
 	const time = Math.round(Number(timeInMs) / 1000);
 	if (!Number.isFinite(time)) return;
 
+	// Server expects whole seconds to rank solvers; keep rounding consistent.
 	return apiPost("/api/crosswords/solve", { username, time, releaseDate });
 }
 
@@ -28,6 +29,7 @@ export async function syncLocalSolves() {
 			await addSolve(timeMs, releaseDate);
 		} catch (err) {
 			console.error("Failed to sync solve", entry, err);
+			// Keep unsynced attempts so we can retry after connectivity/auth issues.
 			unsynced.push(entry);
 		}
 	}

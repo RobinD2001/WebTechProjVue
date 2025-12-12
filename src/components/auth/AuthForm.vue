@@ -49,6 +49,7 @@
 		user.confirmPassword = "";
 	}
 
+	// Keep client-side rules lenient; backend remains the source of truth.
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 	async function submitForm() {
@@ -100,7 +101,6 @@
 				data.message ||
 				(isLogin.value ? t("auth.successLogin") : t("auth.successRegister"));
 			emit("success", [true, successMessage]);
-			console.log("Auth success:", data.user);
 			clearForm();
 		} catch (e) {
 			console.error(e);
@@ -150,18 +150,18 @@
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
-			type="password"
-			required
-			:autocomplete="isLogin ? 'current-password' : 'new-password'"
-			aria-required="true"
-			:aria-label="$t('auth.labels.password')"
-			:placeholder="$t('auth.placeholders.password')" />
-		<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
-			<button type="button" class="toggle-btn" @click="goToForgotPassword">
-				{{ $t("auth.forgotPassword") }}
-			</button>
-		</div>
-	</BFormGroup>
+				type="password"
+				required
+				:autocomplete="isLogin ? 'current-password' : 'new-password'"
+				aria-required="true"
+				:aria-label="$t('auth.labels.password')"
+				:placeholder="$t('auth.placeholders.password')" />
+			<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
+				<button type="button" class="toggle-btn" @click="goToForgotPassword">
+					{{ $t("auth.forgotPassword") }}
+				</button>
+			</div>
+		</BFormGroup>
 
 		<BFormGroup
 			v-if="!isLogin"

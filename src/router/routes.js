@@ -1,17 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
-import Home from "@/components/views/Home.vue";
-import DailyCrossword from "@/components/views/DailyXWord.vue";
-import Archive from "@/components/views/Archive.vue";
-import Profile from "@/components/views/Profile.vue";
-import Admin from "@/components/views/Admin.vue";
-import Leaderboard from "@/components/views/Leaderboard.vue";
-import HowTo from "@/components/views/HowTo.vue";
-import NotFound from "@/components/layout/NotFound.vue";
 import { randomArchiveDate } from "@/utils/date";
 import i18n, { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/i18n";
-import ForgotPassword from "@/components/auth/ForgotPassword.vue";
-import ResetPassword from "@/components/auth/ResetPassword.vue";
+// Lazy-load route chunks to keep initial bundle lean.
+const Home = () => import("@/components/views/Home.vue");
+const DailyCrossword = () => import("@/components/views/DailyXWord.vue");
+const Archive = () => import("@/components/views/Archive.vue");
+const Profile = () => import("@/components/views/Profile.vue");
+const Admin = () => import("@/components/views/Admin.vue");
+const Leaderboard = () => import("@/components/views/Leaderboard.vue");
+const HowTo = () => import("@/components/views/HowTo.vue");
+const NotFound = () => import("@/components/layout/NotFound.vue");
+const ForgotPassword = () => import("@/components/auth/ForgotPassword.vue");
+const ResetPassword = () => import("@/components/auth/ResetPassword.vue");
 
 const ARCHIVE_START_DATE = "2025-12-01";
 

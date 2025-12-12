@@ -5,6 +5,7 @@
 	import { getXWFromDate } from "@/composables/useXW.js";
 	import { useGridFactory } from "@/composables/xw/useGridFactory";
 	import { DEFAULT_LOCALE } from "@/i18n";
+	import { buildGridPayloadFromClues, emptyGridPayload } from "@/utils/clueGrid";
 
 	const today = new Date().toISOString().slice(0, 10);
 	const clues = ref([]);
@@ -22,70 +23,18 @@
 		return 300 / gridSize.cols;
 	});
 
-	function buildPayloadFromClues(list) {
-		if (!list.length) {
-			return {
-				size: { rows: 0, cols: 0 },
-				clueNumbers: [],
-				acrossIds: [],
-				downIds: [],
-			};
-		}
-		let rows = 0;
-		let cols = 0;
-
-		for (const clue of list) {
-			const len = (clue.answer ?? "").length;
-			if (clue.is_across) {
-				rows = Math.max(rows, clue.row + 1);
-				cols = Math.max(cols, clue.col + len);
-			} else {
-				rows = Math.max(rows, clue.row + len);
-				cols = Math.max(cols, clue.col + 1);
-			}
-		}
-
-		const clueNumbers = Array.from({ length: rows }, () => Array(cols).fill(0));
-		const acrossIds = Array.from({ length: rows }, () => Array(cols).fill(null));
-		const downIds = Array.from({ length: rows }, () => Array(cols).fill(null));
-
-		for (const clue of list) {
-			const len = (clue.answer ?? "").length;
-			if (len === 0) continue;
-
-			if (clue.is_across) {
-				for (let i = 0; i < len; i++) {
-					acrossIds[clue.row][clue.col + i] = clue.id ?? clue.start_number;
-					if (i === 0) clueNumbers[clue.row][clue.col + i] = clue.start_number;
-				}
-			} else {
-				for (let i = 0; i < len; i++) {
-					downIds[clue.row + i][clue.col] = clue.id ?? clue.start_number;
-					if (i === 0) clueNumbers[clue.row + i][clue.col] = clue.start_number;
-				}
-			}
-		}
-
-		return {
-			size: { rows, cols },
-			clueNumbers,
-			acrossIds,
-			downIds,
-		};
-	}
-
 	async function loadToday() {
 		loading.value = true;
 		error.value = null;
 		try {
 			clues.value = await getXWFromDate(today);
-			const payload = buildPayloadFromClues(clues.value);
+			const payload = buildGridPayloadFromClues(clues.value);
 			setGrid(payload);
 		} catch (e) {
 			console.error(e);
 			error.value = t("errors.loadCrossword");
 			clues.value = [];
-			setGrid({ size: { rows: 0, cols: 0 }, clueNumbers: [], acrossIds: [], downIds: [] });
+			setGrid(emptyGridPayload());
 		} finally {
 			loading.value = false;
 		}

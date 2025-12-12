@@ -97,6 +97,7 @@
 
 	function updateStartNumbers() {
 		const { startNumbers } = buildGrid(clues.value);
+		// Keeps numbering consistent after inserts/deletes so exports stay stable.
 		clues.value = clues.value.map((clue) => {
 			const key = `${clue.row}-${clue.col}`;
 			return { ...clue, start_number: startNumbers.get(key) ?? null };
@@ -104,16 +105,28 @@
 	}
 
 	function addClue() {
-		if (!newClue.clue.trim() || !newClue.answer.trim()) return;
+		const clueText = newClue.clue.trim();
+		const answer = newClue.answer.trim();
+
+		if (!clueText || !answer) {
+			openAlert("danger", "Please provide both clue and answer.");
+			return;
+		}
 
 		const row = Number(newClue.row) - 1;
 		const col = Number(newClue.col) - 1;
-		if (Number.isNaN(row) || Number.isNaN(col)) return;
-		if (row < 0 || col < 0) return;
+		if (Number.isNaN(row) || Number.isNaN(col)) {
+			openAlert("danger", "Row and column must be numbers.");
+			return;
+		}
+		if (row < 0 || col < 0) {
+			openAlert("danger", "Row and column start at 1.");
+			return;
+		}
 
 		clues.value.push({
-			clue: newClue.clue.trim(),
-			answer: newClue.answer.trim(),
+			clue: clueText,
+			answer,
 			row,
 			col,
 			down: newClue.down,
@@ -121,7 +134,6 @@
 		});
 
 		updateStartNumbers();
-		console.log(clues);
 
 		newClue.clue = "";
 		newClue.answer = "";
@@ -142,7 +154,10 @@
 	}
 
 	async function submitCrossword() {
-		if (!clues.value.length) return;
+		if (!clues.value.length) {
+			openAlert("danger", "Add at least one clue before uploading.");
+			return;
+		}
 		updateStartNumbers();
 		try {
 			const res = await addCrosswordToDB({

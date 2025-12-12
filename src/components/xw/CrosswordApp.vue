@@ -61,6 +61,7 @@
 				if (!props.date) {
 					puzzleInfo.value = null;
 				} else {
+					// Keep puzzle metadata in sync with date changes (archive jumps, schedule).
 					puzzleInfo.value = await getXWInfo(props.date);
 				}
 			} catch (err) {
@@ -81,6 +82,7 @@
 		const storedSolves = readJson(STORAGE_KEYS.solves, []);
 		const solves = Array.isArray(storedSolves) ? storedSolves : [];
 
+		// Cache solves so guests can sync once they authenticate.
 		solves.push({
 			id: puzzleId.value,
 			timeMs: elapsedMs.value,
